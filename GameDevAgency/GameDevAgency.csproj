@@ -182,6 +182,8 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\GameDataController.cs" />
+    <Compile Include="Controllers\GenreDataController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Global.asax.cs">
@@ -191,8 +193,18 @@
     <Compile Include="Migrations\202403272229074_update-users.designer.cs">
       <DependentUpon>202403272229074_update-users.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202403272301028_Games-Genre.cs" />
+    <Compile Include="Migrations\202403272301028_Games-Genre.designer.cs">
+      <DependentUpon>202403272301028_Games-Genre.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202403272302283_updated-games-genres.cs" />
+    <Compile Include="Migrations\202403272302283_updated-games-genres.designer.cs">
+      <DependentUpon>202403272302283_updated-games-genres.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Game.cs" />
+    <Compile Include="Models\Genre.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -303,6 +315,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202403272229074_update-users.resx">
       <DependentUpon>202403272229074_update-users.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202403272301028_Games-Genre.resx">
+      <DependentUpon>202403272301028_Games-Genre.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202403272302283_updated-games-genres.resx">
+      <DependentUpon>202403272302283_updated-games-genres.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
