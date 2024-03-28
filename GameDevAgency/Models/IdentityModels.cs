@@ -24,8 +24,15 @@ namespace GameDevAgency.Models
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
+        // set the game model as a db table
         public DbSet<Game> Games { get; set; }
+
+        // set the genre model as a db table
         public DbSet<Genre> Genres { get; set; }
+
+        // set the activity model as a db table
+        public DbSet<Activity> Activities { get; set; }
+
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {

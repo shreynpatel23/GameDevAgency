@@ -182,6 +182,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\ActivityDataController.cs" />
     <Compile Include="Controllers\GameDataController.cs" />
     <Compile Include="Controllers\GenreDataController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -201,8 +202,13 @@
     <Compile Include="Migrations\202403272302283_updated-games-genres.designer.cs">
       <DependentUpon>202403272302283_updated-games-genres.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202403272354130_activities.cs" />
+    <Compile Include="Migrations\202403272354130_activities.designer.cs">
+      <DependentUpon>202403272354130_activities.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Activity.cs" />
     <Compile Include="Models\Game.cs" />
     <Compile Include="Models\Genre.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -321,6 +327,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202403272302283_updated-games-genres.resx">
       <DependentUpon>202403272302283_updated-games-genres.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202403272354130_activities.resx">
+      <DependentUpon>202403272354130_activities.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
