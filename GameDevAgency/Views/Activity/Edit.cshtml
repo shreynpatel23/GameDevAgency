@@ -1,0 +1,104 @@
+﻿﻿@model GameDevAgency.Models.ViewModels.AddUpdateActivity
+@{
+    ViewBag.Title = "Edit Activity";
+    ViewBag.Priority = new List<string> { "Easy", "Medium", "Hard" };
+    ViewBag.Status = new List<string> { "Todo", "In Progress", "Testing", "Done" };
+    ViewBag.Estimates = new List<string> { "2", "3", "5", "8", "13" };
+}
+
+<h2>Edit</h2>
+
+<form action="/Activity/Update/@Model.SelectedActivity.ActivityId" method="POST">
+    <input type="hidden" name="ActivityId" value="@Model.SelectedActivity.ActivityId" />
+    <div class="mb-3">
+        <label for="ActivityName" class="form-label">Activity Name</label>
+        <input autocomplete="off" required value="@Model.SelectedActivity.ActivityName" type="text" class="form-control" id="ActivityName" name="ActivityName" placeholder="Enter activity name here" aria-describedby="ActivityName">
+    </div>
+    <div class="mb-3">
+        <label for="ActivityDescription" class="form-label">Activity Description</label>
+        <textarea autocomplete="off" required class="form-control" id="ActivityDescription" name="ActivityDescription" placeholder="Write two lines about the activity" rows="3">@Model.SelectedActivity.ActivityDescription</textarea>
+    </div>
+    <div class="mb-3">
+        <label for="ActivityDueDate" class="form-label">Due Date</label>
+        <input autocomplete="off" required value="@ViewData["DueDate"]" type="date" class="form-control" id="ActivityDueDate" name="ActivityDueDate" placeholder="YYYY-MM-DD">
+    </div>
+    <div class="d-flex align-items-center gap-4">
+        <div class="mb-3" style="width: 18rem;">
+            <label for="UserId" class="form-label">Assign Collaborator</label>
+            <select class="form-select" value="@Model.SelectedActivity.UserId" required id="UserId" name="UserId" aria-describedby="User that is going to work on this activity">
+                @foreach (var user in Model.Users)
+                {
+                    string selected = "";
+                    if (user.Id == Model.SelectedActivity.UserId)
+                    {
+                        selected = "selected";
+                    }
+                    <option value="@user.Id" @selected>@user.FirstName @user.LastName</option>
+                }
+            </select>
+        </div>
+        <div class="mb-3" style="width: 18rem;">
+            <label for="GameId" class="form-label">Assign Project</label>
+            <select class="form-select" value="@Model.SelectedActivity.GameId" required id="GameId" name="GameId" aria-describedby="Game for which this activity is created">
+                @foreach (var game in Model.Games)
+                {
+                    string selected = "";
+                    if (game.GameId== Model.SelectedActivity.GameId)
+                    {
+                        selected = "selected";
+                    }
+                    <option value="@game.GameId" @selected>@game.GameName</option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="d-flex align-items-center gap-4">
+        <div class="mb-3" style="width: 18rem;">
+            <label for="ActivityStatus" class="form-label">Status</label>
+            <select class="form-select" value="@Model.SelectedActivity.ActivityStatus" required id="ActivityStatus" name="ActivityStatus" aria-describedby="ActivityStatus">
+                @foreach (var status in ViewBag.Status)
+                {
+                    string selected = "";
+                    if (status == Model.SelectedActivity.ActivityStatus)
+                    {
+                        selected = "selected";
+                    }
+                    <option value="@status" @selected>@status</option>
+                }
+            </select>
+        </div>
+        <div class="mb-3" style="width: 18rem;">
+            <label for="ActivityPriority" class="form-label">Priority</label>
+            <select class="form-select" value="@Model.SelectedActivity.ActivityPriority" required id="ActivityPriority" name="ActivityPriority" aria-describedby="ActivityPriority">
+                @foreach (var priority in ViewBag.Priority)
+                {
+                    string selected = "";
+                    if (priority == Model.SelectedActivity.ActivityPriority)
+                    {
+                        selected = "selected";
+                    }
+                    <option value="@priority" @selected>@priority</option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="mb-3" style="width: 18rem;">
+        <label for="ActivityEstimates" class="form-label">Estimates</label>
+        <select class="form-select" value="@Model.SelectedActivity.ActivityEstimates" required id="ActivityEstimates" name="ActivityEstimates" aria-describedby="ActivityEstimates">
+            S
+            @foreach (var estimate in ViewBag.Estimates)
+            {
+                string selected = "";
+                if (estimate == Model.SelectedActivity.ActivityEstimates)
+                {
+                    selected = "selected";
+                }
+                <option value="@estimate" @selected>@estimate Hours</option>
+            }
+        </select>
+    </div>
+    <div class="d-flex align-items-center gap-4">
+        <a href="/Activity/List" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>

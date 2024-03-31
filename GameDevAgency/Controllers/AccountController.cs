@@ -16,6 +16,7 @@ using GameDevAgency.Models.ViewModels;
 using System.EnterpriseServices;
 using System.Data.Entity.Migrations;
 using System.Data.Entity;
+using System.Web.Security;
 
 namespace GameDevAgency.Controllers
 {
@@ -95,16 +96,7 @@ namespace GameDevAgency.Controllers
             AccountUpdateViewModel.Email = ApplicationUser.Email;
             AccountUpdateViewModel.PhoneNumber = ApplicationUser.PhoneNumber;
             AccountUpdateViewModel.UserName = ApplicationUser.UserName;
-
-            // :TODO I need to fix the role allocation 
-            // bool isAdmin = User.IsInRole("Admin");
-            // AccountUpdateViewModel.UserRole = isAdmin ? "Admin" : "Developer";
-
-            // get all the list of roles 
-            List<IdentityRole> Roles = db.Roles.ToList();
-
-            // append the fetched roles to the view model
-            AccountUpdateViewModel.Roles = Roles;
+            
 
             return View(AccountUpdateViewModel);
         }
@@ -114,34 +106,6 @@ namespace GameDevAgency.Controllers
         [HttpPost]
         public async Task<ActionResult> Update(string id, AccountUpdateViewModel model)
         {
-            /*
-            try
-            {
-                // write logic here to match the id and update the user table
-                Debug.WriteLine("id = " + id);
-                Debug.WriteLine("Model = " + model.UserId);
-
-                // check if the model state is valid or not
-                if (!ModelState.IsValid)
-                {
-                    return View(model);
-                }
-
-                if (id != model.UserId)
-                {
-                    return RedirectToAction("Error");
-                }
-
-                db.Entry(model).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("List");
-            } catch
-            {
-                return View();
-            } 
-            */
-            // Find the user by id
-
             if (!ModelState.IsValid)
             {
                 return View(model);

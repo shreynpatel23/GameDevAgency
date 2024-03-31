@@ -1,4 +1,5 @@
 ﻿using GameDevAgency.Models;
+using GameDevAgency.Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,6 +16,7 @@ namespace GameDevAgency.Controllers
         // declare http client and js serializer
         private static readonly HttpClient client;
         private JavaScriptSerializer jss = new JavaScriptSerializer();
+        private ApplicationDbContext db = new ApplicationDbContext();
 
         // create a new client and configure the base url
         static ActivityController()
@@ -84,49 +86,178 @@ namespace GameDevAgency.Controllers
             return View(activities);
         }
 
-        // GET: Activity/Details/5
+        // renders the activity details page
+        // GET: Activity/Details/{id}
         public ActionResult Details(int id)
         {
-            return View();
+            // other way to fetch the data is 
+            //curl https://localhost:44313/api/ActivityData/GetActivityDetails/2
+
+            // assign the url to a string
+            string url = "ActivityData/GetActivityDetails/" + id;
+
+            // use the string to get the response
+            HttpResponseMessage response = client.GetAsync(url).Result;
+
+
+            // create an empty DTO Object and read the data
+            ActivityDto activity = response.Content.ReadAsAsync<ActivityDto>().Result;
+
+            // pass the data to the view
+            return View(activity);
         }
 
+        // renders the add activity page
+        // GET Activity/Add
+        public ActionResult Add()
+        {
+            // for this page we need to list of projects and collaborators in dropdowns
+            // so we created a viewModal for AddUpdateActivity.
+            // this view modal will have
+            // -> selectedActivity (in case of update)
+            // -> listOfGames
+            // -> ListOfUsers
+
+            // create a new viewmodel for {collaboratos, and projects}
+            AddUpdateActivity AddUpdateActivity = new AddUpdateActivity();
+
+            // fetch all the list of users present in the database
+            List<ApplicationUser> ApplicationUsers = db.Users.OrderBy(u => u.FirstName).ToList();
+
+            // assign them to the viewmodal
+            AddUpdateActivity.Users = ApplicationUsers;
+
+            // fetch all the list of projects in the system
+            // curl https://localhost:44313/api/ProjectData/GetAllProjects
+
+            string url = "GameData/GetAllGames";
+
+            // get the response
+            HttpResponseMessage  response = client.GetAsync(url).Result;
+
+            // create an empty project list and read the data as async
+            IEnumerable<Game> Games = response.Content.ReadAsAsync<IEnumerable<Game>>().Result;
+
+            // assign them to the viewmodal
+            AddUpdateActivity.Games = Games;
+
+            // pass the view modal to the view
+            return View(AddUpdateActivity);
+        }
+
+
+        // use this function to create a new activity in the database
         // GET: Activity/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Activity/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult Create(Activity activity)
         {
-            try
-            {
-                // TODO: Add insert logic here
+            // call the AddActivity api from the data controller
+            // curl -H "Content-Type:application/json" -d @activity.json https://localhost:44313/api/ActivityData/AddActivity
 
-                return RedirectToAction("Index");
-            }
-            catch
+            // generate the url string
+            string url = "ActivityData/AddActivity";
+
+            // serialize the json payload
+            string jsonpayload = jss.Serialize(activity);
+
+            // create a new string content with the serialized json
+            HttpContent content = new StringContent(jsonpayload);
+
+            // update the content type to application/json
+            content.Headers.ContentType.MediaType = "application/json";
+
+            // get the response from the database
+            HttpResponseMessage response = client.PostAsync(url, content).Result;
+            // check for status code
+            // if success -> go to list page
+            // else -> go to the error page
+            if (response.IsSuccessStatusCode)
             {
-                return View();
+                return RedirectToAction("List");
             }
+            else
+            {
+                return RedirectToAction("Error");
+            }
+
         }
 
+
+        // renders the edit form
         // GET: Activity/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            // this function again uses the view modal which we created for add activity
+            // the only difference is it will also have the selected activity to populate the form
+
+            // create a new viewmodel for {collaboratos, and projects}
+            AddUpdateActivity AddUpdateActivity = new AddUpdateActivity();
+
+            // fetch the activity details from the given id
+            //curl https://localhost:44313/api/ActivityData/GetActivityDetails/{id}
+            string url = "ActivityData/GetActivityDetails/" + id;
+
+            // get the result
+            HttpResponseMessage response = client.GetAsync(url).Result;
+
+            // create an empty ActivityDTO and store the data in it
+            ActivityDto SelectedActivity = response.Content.ReadAsAsync<ActivityDto>().Result;
+
+            // convert the dueDate 
+            ViewData["DueDate"] = Convert.ToDateTime(SelectedActivity.ActivityDueDate).ToString("yyyy-MM-dd");
+
+            // assign the selectedActivity to the view modal
+            AddUpdateActivity.SelectedActivity = SelectedActivity;
+
+            // fetch all the list of users present in the database
+            List<ApplicationUser> ApplicationUsers = db.Users.OrderBy(u => u.FirstName).ToList();
+
+            // assign them to the viewmodal
+            AddUpdateActivity.Users = ApplicationUsers;
+
+            // fetch all the list of projects in the system
+            // curl https://localhost:44313/api/ProjectData/GetAllProjects
+
+            url = "GameData/GetAllGames";
+
+            // get the response
+            response = client.GetAsync(url).Result;
+
+            // create an empty project list and read the data as async
+            IEnumerable<Game> Games = response.Content.ReadAsAsync<IEnumerable<Game>>().Result;
+
+            // assign them to the viewmodal
+            AddUpdateActivity.Games = Games;
+
+            // send the view modal to the view
+            return View(AddUpdateActivity);
         }
 
+        // us this function to update the record in the database
         // POST: Activity/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Update(int id, Activity activity)
         {
             try
             {
-                // TODO: Add update logic here
+                // call the update activity api using the following api
+                // curl -H "Content-Type:application/json" -d @activity.json https://localhost:44313/api/ActivityData/UpdateActivity/2
+                string url = "ActivityData/UpdateActivity/" + id;
 
-                return RedirectToAction("Index");
+                // serialize the json payload
+                string jsonpayload = jss.Serialize(activity);
+
+                // assign serialized payload to string
+                HttpContent content = new StringContent(jsonpayload);
+
+                // update the content type to application/json
+                content.Headers.ContentType.MediaType = "application/json";
+
+                // get the result and assign the response.
+                HttpResponseMessage response = client.PostAsync(url, content).Result;
+
+                // once done redirect to the details page
+                return RedirectToAction("Details/" + id);
             }
             catch
             {
@@ -134,21 +265,54 @@ namespace GameDevAgency.Controllers
             }
         }
 
-        // GET: Activity/Delete/5
-        public ActionResult Delete(int id)
+        // render the confirm activity delete page
+        // GET: Activity/ConfirmDelete/5
+        public ActionResult ConfirmDelete(int id)
         {
-            return View();
+            // call the get activity details api to fill the data on the confirm delete page
+            string url = "ActivityData/GetActivityDetails/" + id;
+
+            // get the result
+            HttpResponseMessage response = client.GetAsync(url).Result;
+
+            // create an activity dto object and read the data
+            ActivityDto activity = response.Content.ReadAsAsync<ActivityDto>().Result;
+
+            // send the data to view
+            return View(activity);
         }
 
+        // delete an activity from the database
         // POST: Activity/Delete/5
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult Delete(int id, Activity activity)
         {
             try
             {
-                // TODO: Add delete logic here
+                // call the delete activity api
+                // curl -d "" https://localhost:44313/api/ActivityData/DeleteActivity/2
+                string url = "ActivityData/DeleteActivity/" + id;
 
-                return RedirectToAction("Index");
+                // as this is a delete request the string content will be an empty string
+                HttpContent content = new StringContent("");
+
+                // change the content type to application json
+                content.Headers.ContentType.MediaType = "application/json";
+
+                // read the data 
+                HttpResponseMessage response = client.PostAsync(url, content).Result;
+
+                // check the status code
+                // if sucess -> redirect to list
+                // else -> redirect to error
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("List");
+                }
+                else
+                {
+                    return RedirectToAction("Error");
+                }
             }
             catch
             {

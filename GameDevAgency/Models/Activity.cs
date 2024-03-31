@@ -70,7 +70,7 @@ namespace GameDevAgency.Models
         public string ActivityEstimates { get; set; }
 
         // user id
-        public int UserId { get; set; }
+        public string UserId { get; set; }
 
         // first name of the user
         public string FirstName { get; set; }

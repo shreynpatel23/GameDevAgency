@@ -89,6 +89,7 @@ namespace GameDevAgency.Controllers
                 ActivityEstimates = activity.ActivityEstimates,
                 ActivityPriority = activity.ActivityPriority,
                 ActivityStatus = activity.ActivityStatus,
+                UserId = activity.ApplicationUser.Id,
                 FirstName = activity.ApplicationUser.FirstName,
                 LastName = activity.ApplicationUser.LastName,
                 GameId = activity.Game.GameId,

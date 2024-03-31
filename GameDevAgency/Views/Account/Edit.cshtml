@@ -35,20 +35,6 @@
                 <input autocomplete="off" value="@Model.PhoneNumber" type="text" class="form-control" id="PhoneNumber" name="PhoneNumber" placeholder="Enter phone number here" aria-describedby="Phone Number">
             </div>
         </div>
-        <div class="mb-3" style="width: 18rem;">
-            <label for="UserRole" class="form-label">Role</label>
-            <select class="form-select" required id="UserRole" name="UserRole" aria-describedby="User Role">
-                @foreach (var role in Model.Roles)
-                {
-                    string selected = "";
-                    if (role.Name.ToLower() == Model.UserRole.ToLower())
-                    {
-                        selected = "selected";
-                    }
-                    <option value="@role.Name" @selected>@role.Name</option>
-                }
-            </select>
-        </div>
         <div class="row mt-4">
             <div class="col-md-12">
                 <input type="submit" value="Update" class="btn btn-outline-dark" />

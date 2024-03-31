@@ -1,0 +1,23 @@
+﻿﻿@model GameDevAgency.Models.ActivityDto
+@{
+    ViewBag.Title = "Activity Details";
+}
+
+<a href="/Activity/List" class="btn btn-secondary">Back To Activities</a>
+<hr />
+<div class="d-flex align-items-center gap-2">
+    <h2>Activity Details</h2>
+    <div class="d-flex align-items-center gap-4 ms-auto">
+        <a href="/Activity/Edit/@Model.ActivityId" class="btn btn-success">Edit</a>
+        <a href="/Activity/ConfirmDelete/@Model.ActivityId" class="btn btn-danger">Delete</a>
+    </div>
+</div>
+
+<p class="text-dark">Activity Name: <span class="fw-bold">@Model.ActivityName</span></p>
+<p class="text-dark">Activity Description: <span class="fw-bold">@Model.ActivityDescription</span></p>
+<p class="text-dark">Activity Due Date: <span class="fw-bold">@Model.ActivityDueDate</span></p>
+<p class="text-dark">Assigned To : <span class="fw-bold"><a href="/Account/Details/@Model.UserId">@Model.FirstName @Model.LastName</a></span></p>
+<p class="text-dark">Project : <span class="fw-bold"><a href="/Game/Details/@Model.GameId">@Model.GameName</a></span></p>
+<p class="text-dark">Status : <span class="fw-bold">@Model.ActivityStatus</span></p>
+<p class="text-dark">Priority : <span class="fw-bold">@Model.ActivityPriority</span></p>
+<p class="text-dark">Estimates: <span class="fw-bold">@Model.ActivityEstimates Hours</span></p>

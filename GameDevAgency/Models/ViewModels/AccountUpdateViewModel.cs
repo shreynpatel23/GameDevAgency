@@ -21,9 +21,5 @@ namespace GameDevAgency.Models.ViewModels
         public string PhoneNumber { get; set; } 
         // user name of the user
         public string UserName {  get; set; }
-        // the current role assigned to the user
-        public string UserRole {  get; set; }
-        // list of roles
-        public List<IdentityRole> Roles { get; set; }
     }
 }
