@@ -9,14 +9,21 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using GameDevAgency.Models;
+using System.Collections.Generic;
+using System.Diagnostics;
+using Microsoft.AspNet.Identity.EntityFramework;
+using GameDevAgency.Models.ViewModels;
+using System.EnterpriseServices;
+using System.Data.Entity.Migrations;
+using System.Data.Entity;
 
 namespace GameDevAgency.Controllers
 {
-    [Authorize]
     public class AccountController : Controller
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private ApplicationDbContext db = new ApplicationDbContext();
 
         public AccountController()
         {
@@ -50,6 +57,122 @@ namespace GameDevAgency.Controllers
             {
                 _userManager = value;
             }
+        }
+
+        // GET: /Account/List
+        [Authorize(Roles = "Admin")]
+        public ActionResult List()
+        {
+            List<ApplicationUser> ApplicationUsers = db.Users.OrderBy(u => u.FirstName).ToList();
+            return View(ApplicationUsers);
+        }
+
+        // GET: /Account/Details/{id}
+        [Authorize(Roles = "Admin")]
+        public ActionResult Details(string id)
+        {
+            ApplicationUser ApplicationUser = db.Users.Find(id);
+            
+            return View(ApplicationUser);
+        }
+
+        // GET /Account/Edit/{id}
+        [Authorize(Roles = "Admin")]
+        public ActionResult Edit(string id)
+        {
+            // define a view model for the update screen
+            // in this view model there will be application user details and list of roles
+            AccountUpdateViewModel AccountUpdateViewModel = new AccountUpdateViewModel();
+
+            // get the user details that you want to update
+            ApplicationUser ApplicationUser = db.Users.Find(id);
+
+
+            // attach the user to the view model
+            AccountUpdateViewModel.UserId = ApplicationUser.Id;
+            AccountUpdateViewModel.FirstName = ApplicationUser.FirstName;
+            AccountUpdateViewModel.LastName = ApplicationUser.LastName;
+            AccountUpdateViewModel.Email = ApplicationUser.Email;
+            AccountUpdateViewModel.PhoneNumber = ApplicationUser.PhoneNumber;
+            AccountUpdateViewModel.UserName = ApplicationUser.UserName;
+
+            // :TODO I need to fix the role allocation 
+            // bool isAdmin = User.IsInRole("Admin");
+            // AccountUpdateViewModel.UserRole = isAdmin ? "Admin" : "Developer";
+
+            // get all the list of roles 
+            List<IdentityRole> Roles = db.Roles.ToList();
+
+            // append the fetched roles to the view model
+            AccountUpdateViewModel.Roles = Roles;
+
+            return View(AccountUpdateViewModel);
+        }
+
+        // POST /Account/Update/{id}
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<ActionResult> Update(string id, AccountUpdateViewModel model)
+        {
+            /*
+            try
+            {
+                // write logic here to match the id and update the user table
+                Debug.WriteLine("id = " + id);
+                Debug.WriteLine("Model = " + model.UserId);
+
+                // check if the model state is valid or not
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+
+                if (id != model.UserId)
+                {
+                    return RedirectToAction("Error");
+                }
+
+                db.Entry(model).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("List");
+            } catch
+            {
+                return View();
+            } 
+            */
+            // Find the user by id
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = await UserManager.FindByIdAsync(model.UserId);
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+
+            // update the properties of the user
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.Email = model.Email;
+            user.UserName = model.UserName;
+            user.PhoneNumber = model.PhoneNumber;
+
+            // update the role of the user
+            //adding a role of "Guest" to the newly added user.
+            UserManager.AddToRole(user.Id, "Developer");
+
+            var result = await UserManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                AddErrors(result);
+                return View(model);
+            }
+
+            return RedirectToAction("List");
+
         }
 
         //
@@ -166,7 +289,7 @@ namespace GameDevAgency.Controllers
                     // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("List");
                 }
                 AddErrors(result);
             }

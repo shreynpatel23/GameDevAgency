@@ -1,0 +1,15 @@
+﻿@model IEnumerable<GameDevAgency.Models.ApplicationUser>
+@{
+    ViewBag.Title = "User List";
+}
+
+<div class="d-flex align-items-center gap-4">
+    <h2>User List</h2>
+</div>
+@foreach (var user in Model)
+{
+    <div class="py-4 border-bottom">
+        <h3><a href="/Account/Details/@user.Id" class="text-dark">@user.FirstName @user.LastName</a></h3>
+        <p class="text-dark">@user.Email</p>
+    </div>
+}

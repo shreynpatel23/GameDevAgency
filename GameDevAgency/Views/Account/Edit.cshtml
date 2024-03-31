@@ -1,0 +1,60 @@
+﻿@model GameDevAgency.Models.ViewModels.AccountUpdateViewModel
+@{
+    ViewBag.Title = "Account Update";
+}
+
+<h2>Update Account</h2>
+
+<div class="card p-4 my-4" style="width: 60%">
+    <h4 class="card-title mb-3">Update Account</h4>
+    <form action="/Account/Update/@Model.UserId" method="post">
+        <input type="hidden" name="UserId" value="@Model.UserId" />
+        <div class="d-flex align-items-start gap-4">
+            <div class="mb-3 w-50">
+                <label for="FirstName" class="form-label">First Name</label>
+                <input autocomplete="off" required value="@Model.FirstName" type="text" class="form-control" id="FirstName" name="FirstName" placeholder="Enter first name here" aria-describedby="First Name">
+            </div>
+            <div class="mb-3 w-50">
+                <label for="LastName" class="form-label">Last Name</label>
+                <input autocomplete="off" required value="@Model.LastName" type="text" class="form-control" id="LastName" name="LastName" placeholder="Enter last name here" aria-describedby="Last Name">
+            </div>
+        </div>
+        <div class="d-flex align-items-start gap-4">
+            <div class="mb-3 w-50">
+                <label for="UserName" class="form-label">User Name</label>
+                <input autocomplete="off" required value="@Model.UserName" type="text" class="form-control" id="UserName" name="UserName" placeholder="Enter user name here" aria-describedby="User Name">
+            </div>
+            <div class="mb-3 w-50">
+                <label for="Email" class="form-label">Email Address</label>
+                <input autocomplete="off" required value="@Model.Email" type="email" class="form-control" id="Email" name="Email" placeholder="Enter email here" aria-describedby="Email Address">
+            </div>
+        </div>
+        <div class="d-flex align-items-start gap-4">
+            <div class="mb-3 w-50">
+                <label for="PhoneNumber" class="form-label">Phone Number</label>
+                <input autocomplete="off" value="@Model.PhoneNumber" type="text" class="form-control" id="PhoneNumber" name="PhoneNumber" placeholder="Enter phone number here" aria-describedby="Phone Number">
+            </div>
+        </div>
+        <div class="mb-3" style="width: 18rem;">
+            <label for="UserRole" class="form-label">Role</label>
+            <select class="form-select" required id="UserRole" name="UserRole" aria-describedby="User Role">
+                @foreach (var role in Model.Roles)
+                {
+                    string selected = "";
+                    if (role.Name.ToLower() == Model.UserRole.ToLower())
+                    {
+                        selected = "selected";
+                    }
+                    <option value="@role.Name" @selected>@role.Name</option>
+                }
+            </select>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <input type="submit" value="Update" class="btn btn-outline-dark" />
+            </div>
+        </div>
+    </form>
+</div>
+
+

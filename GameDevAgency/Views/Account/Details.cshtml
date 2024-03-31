@@ -1,0 +1,14 @@
+﻿@model GameDevAgency.Models.ApplicationUser
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>User Details</h2>
+
+<p>First Name: @Model.FirstName</p>
+<p>Last Name: @Model.LastName</p>
+<p>User Name: @Model.UserName</p>
+<p>Email: @Model.Email</p>
+
+
+<a href="/Account/Edit/@Model.Id" class="btn btn-primary">Edit</a>
