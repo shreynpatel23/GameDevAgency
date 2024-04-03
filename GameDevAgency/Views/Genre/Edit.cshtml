@@ -1,0 +1,18 @@
+﻿@model GameDevAgency.Models.GenreDto
+@{
+    ViewBag.Title = "Edit Genre";
+}
+
+<h2>Edit Genre</h2>
+
+<form action="/Genre/Update/@Model.GenreId" method="POST">
+    <input type="hidden" name="GenreId" value="@Model.GenreId" />
+    <div class="mb-3">
+        <label for="GenreName" class="form-label">Genre Name</label>
+        <input autocomplete="off" required value="@Model.GenreName" type="text" class="form-control" id="GenreName" name="GenreName" placeholder="Enter genre name here" aria-describedby="Name of the genre">
+    </div>
+    <div class="d-flex align-items-center gap-4">
+        <a href="/Genre/List" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>

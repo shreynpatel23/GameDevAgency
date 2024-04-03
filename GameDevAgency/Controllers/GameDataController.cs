@@ -38,6 +38,30 @@ namespace GameDevAgency.Controllers
             return GameDtos;
         }
 
+        // GET: api/GameData/GetAllGamesForGenre/1  
+        [HttpGet]
+        [Route("api/GameData/GetAllGamesForGenre/{id}")]
+        public IEnumerable<GameDto> GetAllGamesForGenre(int id)
+        {
+            List<Game> Games = db.Games.Where(
+                game => game.Genres.Any(genre => genre.GenreId == id)
+                ).ToList();
+            List<GameDto> GameDtos = new List<GameDto>();
+
+            // loop through the games array and push it to gamedto
+            Games.ForEach(game => GameDtos.Add(new GameDto()
+            {
+                GameId = game.GameId,
+                GameName = game.GameName,
+                GameVersion = game.GameVersion,
+                GameDescription = game.GameDescription,
+                GameReleaseDate = game.GameReleaseDate,
+            }));
+
+            // return update GameDto
+            return GameDtos;
+        }
+
         // GET: api/GameData/GetGameDetails/2
         [ResponseType(typeof(Game))]
         [HttpGet]

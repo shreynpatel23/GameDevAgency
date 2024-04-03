@@ -50,7 +50,17 @@ namespace GameDevAgency.Controllers
                 return NotFound();
             }
 
-            return Ok(genre);
+
+            // create a new game dto object and store the values in it
+            GenreDto GenreDto = new GenreDto()
+            {
+                GenreId = genre.GenreId,
+                GenreName = genre.GenreName,
+            };
+
+
+            // return update GameDto
+            return Ok(GenreDto);
         }
 
         // PUT: api/GenreData/UpdateGenre/2

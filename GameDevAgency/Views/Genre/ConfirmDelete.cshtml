@@ -1,0 +1,15 @@
+﻿@model GameDevAgency.Models.GenreDto
+@{
+    ViewBag.Title = "Confirm Delete Genre";
+}
+
+<h2>Confirm Delete <span class="text-danger"> @Model.GenreName</span></h2>
+
+<p class="mb-0 mt-3">Are you sure you want to delete
+<p>Please keep in mind this action cannot be undone!</p>
+<div class="d-flex align-items-center gap-4 mt-4">
+    <a href="/Genre/Details/@Model.GenreId" class="btn btn-secondary">Cancel</a>
+    <form action="/Genre/Delete/@Model.GenreId" method="POST">
+        <input type="submit" class="btn btn-danger" value="Confirm Delete" />
+    </form>
+</div>
