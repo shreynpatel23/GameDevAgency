@@ -57,7 +57,9 @@ namespace GameDevAgency.Controllers
             if (token != "") client.DefaultRequestHeaders.Add("Cookie", ".AspNet.ApplicationCookie=" + token);
 
             return;
-        } // renders the error page
+        }
+        
+        // renders the error page
         // GET  Error
         public ActionResult Error()
         {
