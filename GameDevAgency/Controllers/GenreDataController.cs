@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
+using System.Security.Policy;
 using System.Web.Http;
 using System.Web.Http.Description;
 using GameDevAgency.Models;
@@ -37,6 +38,47 @@ namespace GameDevAgency.Controllers
             // return the data
             return GenreDtos;
         }
+
+        // GET: api/GenreData/GetAllGenresForGame/{GameId}
+        [HttpGet]
+        [Route("api/GenreData/GetAllGenresForGame/{GameId}")]
+        public IHttpActionResult GetAllGenresForGame(int GameId)
+        {
+            List<Genre> Genres = db.Genres.Where(
+                genre => genre.Games.Any(
+                    game => game.GameId == GameId)
+                ).ToList();
+            List<GenreDto> GenreDto = new List<GenreDto>();
+
+            Genres.ForEach(genre => GenreDto.Add(new GenreDto()
+            {
+                GenreId = genre.GenreId,
+                GenreName = genre.GenreName,
+            }));
+
+            return Ok(GenreDto);
+        }
+
+        // GET: api/GenreData/GetAllGenresNotInGame/{GameId}
+        [HttpGet]
+        [Route("api/GenreData/GetAllGenresNotInGame/{GameId}")]
+        public IHttpActionResult GetAllGenresNotInGame(int GameId)
+        {
+            List<Genre> Genres = db.Genres.Where(
+                genre => !genre.Games.Any(
+                    game => game.GameId == GameId)
+                ).ToList();
+            List<GenreDto> GenreDto = new List<GenreDto>();
+
+            Genres.ForEach(genre => GenreDto.Add(new GenreDto()
+            {
+                GenreId = genre.GenreId,
+                GenreName = genre.GenreName,
+            }));
+
+            return Ok(GenreDto);
+        }
+       
 
         // GET: api/GenreData/GetGenreDetails/2
         [ResponseType(typeof(Genre))]

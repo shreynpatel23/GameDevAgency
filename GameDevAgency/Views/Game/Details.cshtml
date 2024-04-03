@@ -1,4 +1,4 @@
-﻿@model GameDevAgency.Models.GameDto
+﻿@model GameDevAgency.Models.ViewModels.DetailsGames
 
 @{
     ViewBag.Title = "Game Details";
@@ -9,17 +9,51 @@
 <div class="d-flex align-items-center gap-2">
     <h2>Game Details</h2>
     <div class="d-flex align-items-center gap-4 ms-auto">
-        <a href="/Game/Edit/@Model.GameId" class="btn btn-success">Edit</a>
-        <a href="/Game/ConfirmDelete/@Model.GameId" class="btn btn-danger">Delete</a>
+        <a href="/Game/Edit/@Model.Game.GameId" class="btn btn-success">Edit</a>
+        <a href="/Game/ConfirmDelete/@Model.Game.GameId" class="btn btn-danger">Delete</a>
     </div>
 </div>
 
-<p class="text-dark">Game Name: <span class="fw-bold">@Model.GameName</span></p>
-<p class="text-dark">Game Description: <span class="fw-bold">@Model.GameDescription</span></p>
-<p class="text-dark">Game Version: <span class="fw-bold">@Model.GameVersion</span></p>
-<p class="text-dark">Release Date: <span class="fw-bold">@Model.GameReleaseDate</span></p>
+<p class="text-dark">Game Name: <span class="fw-bold">@Model.Game.GameName</span></p>
+<p class="text-dark">Game Description: <span class="fw-bold">@Model.Game.GameDescription</span></p>
+<p class="text-dark">Game Version: <span class="fw-bold">@Model.Game.GameVersion</span></p>
+<p class="text-dark">Release Date: <span class="fw-bold">@Model.Game.GameReleaseDate</span></p>
 
-<h3>Tasks for @Model.GameName</h3>
 <hr />
+
+<h3 class="mt-4">Genres for @Model.Game.GameName</h3>
+@if (Model.Genres.Count() <= 0)
+{
+    <p>No Genres Assigned yet!</p>
+}
+@foreach (var genre in Model.Genres)
+{
+    <div class="d-flex align-items-start gap-2 my-4">
+        <h5><a class="text-black" href="/Genre/Details/@genre.GenreId">@genre.GenreName</a></h5>
+        @if (Model.IsAdmin)
+        {
+            <a class="text-danger" href="/Game/Unassociate/@Model.Game.GameId?GenreId=@genre.GenreId">[&times;]</a>
+        }
+    </div>
+}
+
+@if (Model.IsAdmin && Model.AvailableGenres.Count() > 0)
+{
+    <div class="mb-3">
+        <label for="GenreId" class="form-label">Add Genre</label>
+        <form method="POST" class="d-flex align-items-center gap-4" action="/Game/Associate/@Model.Game.GameId">
+            <select class="form-select" required id="GenreId" name="GenreId" aria-describedby="Add genre to the game">
+                @foreach (var genre in Model.AvailableGenres)
+                {
+                    <option value="@genre.GenreId">@genre.GenreName</option>
+                }
+            </select>
+            <input type="submit" class="btn btn-primary" value="Add Genre" />
+        </form>
+    </div>
+}
+
+<hr />
+<h3>Tasks for @Model.Game.GameName</h3>
 
 <p>List of tasks will come here</p>

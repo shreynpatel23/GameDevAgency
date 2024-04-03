@@ -62,6 +62,48 @@ namespace GameDevAgency.Controllers
             return GameDtos;
         }
 
+        [HttpPost]
+        [Route("api/GameData/AssociateGameWithGenre/{gameId}/{genreId}")]
+        [Authorize(Roles = "Admin")]
+        public IHttpActionResult AssociateGameWithGenre(int gameId, int genreId)
+        {
+
+            Game Game = db.Games.Include(game => game.Genres).Where(game => game.GameId == gameId).FirstOrDefault();
+            Genre Genre = db.Genres.Find(genreId);
+
+            if (Game == null || Genre == null)
+            {
+                return NotFound();
+            }
+
+
+            Game.Genres.Add(Genre);
+            db.SaveChanges();
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("api/GameData/UnAssociateGameWithGenre/{gameId}/{genreId}")]
+        [Authorize(Roles = "Admin")]
+        public IHttpActionResult UnAssociateGameWithGenre(int gameId, int genreId)
+        {
+
+            Game Game = db.Games.Include(game => game.Genres).Where(game => game.GameId == gameId).FirstOrDefault();
+            Genre Genre = db.Genres.Find(genreId);
+
+            if (Game == null || Genre == null)
+            {
+                return NotFound();
+            }
+
+
+            Game.Genres.Remove(Genre);
+            db.SaveChanges();
+
+            return Ok();
+        }
+
         // GET: api/GameData/GetGameDetails/2
         [ResponseType(typeof(Game))]
         [HttpGet]

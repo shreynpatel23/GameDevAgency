@@ -7,8 +7,10 @@ namespace GameDevAgency.Models.ViewModels
 {
     public class DetailsGames
     {
-        public GameDto GameDto { get; set; }
+        public bool IsAdmin { get; set; }
+        public GameDto Game { get; set; }
         public IEnumerable<GenreDto> Genres { get; set; }
+        public IEnumerable<GenreDto> AvailableGenres { get; set; }
 
         public IEnumerable<Activity> Activities { get; set; }
     }
