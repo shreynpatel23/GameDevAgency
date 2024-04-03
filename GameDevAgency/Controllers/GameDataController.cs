@@ -50,19 +50,7 @@ namespace GameDevAgency.Controllers
                 return NotFound();
             }
 
-            // create a new game dto object and store the values in it
-            GameDto GameDto = new GameDto()
-            {
-                GameId = game.GameId,
-                GameName = game.GameName,
-                GameVersion = game.GameVersion,
-                GameDescription = game.GameDescription,
-                GameReleaseDate = game.GameReleaseDate,
-            };
-
-
-            // return update GameDto
-            return Ok(GameDto);
+            return Ok(game);
         }
 
         // PUT: api/GameData/UpdateGame/2
