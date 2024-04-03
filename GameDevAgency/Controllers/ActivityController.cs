@@ -59,6 +59,7 @@ namespace GameDevAgency.Controllers
             return;
         }
         
+
         // renders the error page
         // GET  Error
         public ActionResult Error()
