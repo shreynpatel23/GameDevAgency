@@ -1,0 +1,15 @@
+﻿@model IEnumerable<GameDevAgency.Models.GenreDto>
+@{
+    ViewBag.Title = "Genre List";
+}
+
+<div class="d-flex align-items-center gap-4">
+    <h2>Genre List</h2>
+    <a href="/Genre/Add" class="btn btn-primary">Add Genre</a>
+</div>
+@foreach (var genre in Model)
+{
+    <div class="py-4">
+        <h3><a href="/Genre/Details/@genre.GenreId" class="text-dark">@genre.GenreName </a></h3>
+    </div>
+}

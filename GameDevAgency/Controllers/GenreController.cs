@@ -1,7 +1,7 @@
 ﻿using GameDevAgency.Models;
+using GameDevAgency.Models.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.EnterpriseServices;
 using System.Linq;
 using System.Net.Http;
 using System.Web;
@@ -10,14 +10,14 @@ using System.Web.Script.Serialization;
 
 namespace GameDevAgency.Controllers
 {
-    public class GameController : Controller
+    public class GenreController : Controller
     {
         // declare http client and js serializer
         private static readonly HttpClient client;
         private JavaScriptSerializer jss = new JavaScriptSerializer();
 
         // create a new client and configure the base url
-        static GameController()
+        static GenreController()
         {
             HttpClientHandler handler = new HttpClientHandler()
             {
@@ -38,64 +38,84 @@ namespace GameDevAgency.Controllers
             return View();
         }
 
-        // GET: Game/List
+        // GET: Genre/List
         public ActionResult List()
         {
             // make a curl request to
-            // https://localhost:44313/api/GameData/GetAllGames
+            // https://localhost:44313/api/GenreData/GetAllGenres
 
             // create a url to call api
-            string url = "GameData/GetAllGames";
+            string url = "GenreData/GetAllGenres";
 
             // get the response 
             HttpResponseMessage response = client.GetAsync(url).Result;
 
-            // create empty GameDta list and read the data from the response
-            IEnumerable<GameDto> games = response.Content.ReadAsAsync<IEnumerable<GameDto>>().Result;
+            // create empty GenreDto list and read the data from the response
+            IEnumerable<GenreDto> genre = response.Content.ReadAsAsync<IEnumerable<GenreDto>>().Result;
 
 
             // send the data in the view
-            return View(games);
+            return View(genre);
         }
 
-        // GET: Game/Details/5
+        // GET: Genre/Details/5
         public ActionResult Details(int id)
         {
-            // make a curl request to
-            // https://localhost:44313/api/GameData/GetGameDetails/4
+            // view model to get genre details and list of games for each genre
+            DetailsGenre DetailsGenre = new DetailsGenre();
+
+            // make a curl request to get the genre details
+            // https://localhost:44313/api/GenreData/GetGenreDetails/4
 
             // assign the url to a string
-            string url = "GameData/GetGameDetails/" + id;
+            string url = "GenreData/GetGenreDetails/" + id;
 
             // use the string to get the response
             HttpResponseMessage response = client.GetAsync(url).Result;
 
+            // create an empty DTO Object and read the data
+            GenreDto genreDto = response.Content.ReadAsAsync<GenreDto>().Result;
+
+            // assign the details to view model
+            DetailsGenre.Genre = genreDto;
+
+            // make a curl request to get the list of games for genre id
+            // https://localhost:44313/api/GameData/GetAllGamesForGenre/4
+
+            // assign the url to a string
+            url = "GameData/GetAllGamesForGenre/" + id;
+
+            // use the string to get the response
+            response = client.GetAsync(url).Result;
 
             // create an empty DTO Object and read the data
-            GameDto game = response.Content.ReadAsAsync<GameDto>().Result;
+            IEnumerable<GameDto> Games = response.Content.ReadAsAsync<IEnumerable<GameDto>>().Result;
+
+            // assign the list of games to view model
+            DetailsGenre.Games = Games;
 
             // pass the data to the view
-            return View(game);
+            return View(DetailsGenre);
         }
 
-        // GET: Game/Add
+        // GET: Genre/Add
         public ActionResult Add()
         {
             return View();
         }
 
-        // POST: Game/Create
+        // POST: Genre/Create
         [HttpPost]
-        public ActionResult Create(Game Game)
+        public ActionResult Create(Genre Genre)
         {
             // make a curl request to
-            // https://localhost:44313/api/GameData/AddGame/4
+            // https://localhost:44313/api/GenreData/AddGenre/4
 
             // generate the url string
-            string url = "GameData/AddGame";
+            string url = "GenreData/AddGenre";
 
             // serialize the json payload
-            string jsonpayload = jss.Serialize(Game);
+            string jsonpayload = jss.Serialize(Genre);
 
             // create a new string content with the serialized json
             HttpContent content = new StringContent(jsonpayload);
@@ -118,41 +138,38 @@ namespace GameDevAgency.Controllers
             }
         }
 
-        // GET: Game/Edit/5
+        // GET: Genre/Edit/5
         public ActionResult Edit(int id)
         {
-
-            // ge the details of the game from the given id
             // make a curl request to
-            // https://localhost:44313/api/GameData/GetGameDetails/4
+            // https://localhost:44313/api/GenreData/GetGenreDetails/4
 
             // assign the url to a string
-            string url = "GameData/GetGameDetails/" + id;
+            string url = "GenreData/GetGenreDetails/" + id;
 
-            // get the result
+            // use the string to get the response
             HttpResponseMessage response = client.GetAsync(url).Result;
 
-            // create an empty DTO Object and read the data
-            GameDto game = response.Content.ReadAsAsync<GameDto>().Result;
 
-            ViewData["ReleaseDate"] = Convert.ToDateTime(game.GameReleaseDate).ToString("yyyy-MM-dd");
+            // create an empty DTO Object and read the data
+            GenreDto genreDto = response.Content.ReadAsAsync<GenreDto>().Result;
 
             // pass the data to the view
-            return View(game);
+            return View(genreDto);
         }
 
-        // POST: Game/Update/5
+        // POST: Genre/Update/5
         [HttpPost]
-        public ActionResult Update(int id, Game Game)
+        public ActionResult Update(int id, Genre Genre)
         {
             try
             {
                 // call the update activity api using the following api
-                // curl -H "Content-Type:application/json" -d @game.json https://localhost:44313/api/GameData/UpdateGame/4
-                string url = "GameData/UpdateGame/" + id;
+                // curl -H "Content-Type:application/json" -d @genre.json https://localhost:44313/api/GenreData/UpdateGenre/4
+                string url = "GenreData/UpdateGenre/" + id;
 
                 // serialize the json payload
-                string jsonpayload = jss.Serialize(Game);
+                string jsonpayload = jss.Serialize(Genre);
 
                 // assign serialized payload to string
                 HttpContent content = new StringContent(jsonpayload);
@@ -172,35 +189,35 @@ namespace GameDevAgency.Controllers
             }
         }
 
-        // GET: Game/ConfirmDelete/5
+        // GET: Genre/ConfirmDelete/5
         public ActionResult ConfirmDelete(int id)
         {
-            // ge the details of the game from the given id
             // make a curl request to
-            // https://localhost:44313/api/GameData/GetGameDetails/4
+            // https://localhost:44313/api/GenreData/GetGenreDetails/4
 
             // assign the url to a string
-            string url = "GameData/GetGameDetails/" + id;
+            string url = "GenreData/GetGenreDetails/" + id;
 
-            // get the result
+            // use the string to get the response
             HttpResponseMessage response = client.GetAsync(url).Result;
 
+
             // create an empty DTO Object and read the data
-            GameDto game = response.Content.ReadAsAsync<GameDto>().Result;
+            GenreDto genreDto = response.Content.ReadAsAsync<GenreDto>().Result;
 
             // pass the data to the view
-            return View(game);
+            return View(genreDto);
         }
 
-        // POST: Game/Delete/5
+        // POST: Genre/Delete/5
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult Delete(int id)
         {
             try
             {
                 // call the delete game api
-                // curl -d "" https://localhost:44313/api/GameData/DeleteGame/4
-                string url = "GameData/DeleteGame/" + id;
+                // curl -d "" https://localhost:44313/api/GenreData/DeleteGenre/4
+                string url = "GenreData/DeleteGenre/" + id;
 
                 // as this is a delete request the string content will be an empty string
                 HttpContent content = new StringContent("");

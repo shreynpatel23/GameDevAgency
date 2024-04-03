@@ -1,0 +1,38 @@
+﻿@model GameDevAgency.Models.ViewModels.DetailsGenre
+
+@{
+    ViewBag.Title = "Genre Details";
+}
+
+<a href="/Genre/List" class="btn btn-secondary">Back To Genre</a>
+<hr />
+<div class="d-flex align-items-center gap-2">
+    <h2>Genre Details</h2>
+    <div class="d-flex align-items-center gap-4 ms-auto">
+        <a href="/Genre/Edit/@Model.Genre.GenreId" class="btn btn-success">Edit</a>
+        <a href="/Genre/ConfirmDelete/@Model.Genre.GenreId" class="btn btn-danger">Delete</a>
+    </div>
+</div>
+
+<p class="text-dark">Genre Name: <span class="fw-bold">@Model.Genre.GenreName</span></p>
+
+<hr />
+
+<h4>List of Games with @Model.Genre.GenreName</h4>
+@if (Model.Games.Count() <= 0)
+{
+    <p>There are no Games assigned to this Genre</p>
+    <a class="btn btn-primary" href="/Games/List">Go To Games</a>
+}
+<div class="d-flex align-items-start gap-4 flex-wrap my-4">
+    @foreach (var game in Model.Games)
+    {
+        <div class="card" style="width: 25rem;">
+            <div class="card-body">
+                <h5 class="card-title"><a href="/Game/Details/@game.GameId" class="text-dark">@game.GameName</a></h5>
+                <p class="text-dark">@game.GameDescription</p>
+                <p class="text-dark">Release Date : <br /> <span class="fw-bold">@game.GameReleaseDate</span></p>
+            </div>
+        </div>
+    }
+</div>

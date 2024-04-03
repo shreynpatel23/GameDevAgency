@@ -1,0 +1,16 @@
+﻿@{
+    ViewBag.Title = "Add Genre";
+}
+
+<h2>Add Genre</h2>
+
+<form action="/Genre/Create" method="POST">
+    <div class="mb-3">
+        <label for="GenreName" class="form-label">Genre Name</label>
+        <input autocomplete="off" required type="text" class="form-control" id="GenreName" name="GenreName" placeholder="Enter genre name here" aria-describedby="Name of the genre">
+    </div>
+    <div class="d-flex align-items-center gap-4">
+        <a href="/Genre/List" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>
