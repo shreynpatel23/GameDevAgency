@@ -72,6 +72,12 @@ namespace GameDevAgency.Controllers
         // GET: Activity/List
         public ActionResult List()
         {
+            ListActivities ListActivities = new ListActivities();
+
+            // check if the user role is admin or not
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin")) ListActivities.IsAdmin = true;
+            else ListActivities.IsAdmin = false;
+
             // other way to fetch the data is 
             //curl https://localhost:44313/api/ActivityData/GetAllActivities
 
@@ -84,15 +90,23 @@ namespace GameDevAgency.Controllers
             // create empty activityDTO list and read the data from the response
             IEnumerable<ActivityDto> activities = response.Content.ReadAsAsync<IEnumerable<ActivityDto>>().Result;
 
+            // append the data to the view model
+            ListActivities.Activities = activities;
 
             // send the data in the view
-            return View(activities);
+            return View(ListActivities);
         }
 
         // renders the activity details page
         // GET: Activity/Details/{id}
         public ActionResult Details(int id)
         {
+            // declare the view model here
+            DetailsActivity DetailsActivity = new DetailsActivity();
+            // check if the user role is admin or not
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin")) DetailsActivity.IsAdmin = true;
+            else DetailsActivity.IsAdmin = false;
+
             // other way to fetch the data is 
             //curl https://localhost:44313/api/ActivityData/GetActivityDetails/2
 
@@ -106,12 +120,16 @@ namespace GameDevAgency.Controllers
             // create an empty DTO Object and read the data
             ActivityDto activity = response.Content.ReadAsAsync<ActivityDto>().Result;
 
+            // append the data in the view model
+            DetailsActivity.Activity = activity;
+
             // pass the data to the view
-            return View(activity);
+            return View(DetailsActivity);
         }
 
         // renders the add activity page
         // GET Activity/Add
+        [Authorize(Roles = "Admin")]
         public ActionResult Add()
         {
             // for this page we need to list of projects and collaborators in dropdowns
@@ -152,8 +170,11 @@ namespace GameDevAgency.Controllers
         // use this function to create a new activity in the database
         // GET: Activity/Create
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult Create(Activity activity)
         {
+            GetApplicationCookie();//get token credentials
+
             // call the AddActivity api from the data controller
             // curl -H "Content-Type:application/json" -d @activity.json https://localhost:44313/api/ActivityData/AddActivity
 
@@ -188,6 +209,7 @@ namespace GameDevAgency.Controllers
 
         // renders the edit form
         // GET: Activity/Edit/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int id)
         {
             // this function again uses the view modal which we created for add activity
@@ -239,10 +261,13 @@ namespace GameDevAgency.Controllers
         // us this function to update the record in the database
         // POST: Activity/Edit/5
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult Update(int id, Activity activity)
         {
             try
             {
+                GetApplicationCookie();//get token credentials
+
                 // call the update activity api using the following api
                 // curl -H "Content-Type:application/json" -d @activity.json https://localhost:44313/api/ActivityData/UpdateActivity/2
                 string url = "ActivityData/UpdateActivity/" + id;
@@ -270,6 +295,7 @@ namespace GameDevAgency.Controllers
 
         // render the confirm activity delete page
         // GET: Activity/ConfirmDelete/5
+        [Authorize(Roles = "Admin")]
         public ActionResult ConfirmDelete(int id)
         {
             // call the get activity details api to fill the data on the confirm delete page
@@ -288,10 +314,13 @@ namespace GameDevAgency.Controllers
         // delete an activity from the database
         // POST: Activity/Delete/5
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int id, Activity activity)
         {
             try
             {
+                GetApplicationCookie();//get token credentials
+
                 // call the delete activity api
                 // curl -d "" https://localhost:44313/api/ActivityData/DeleteActivity/2
                 string url = "ActivityData/DeleteActivity/" + id;

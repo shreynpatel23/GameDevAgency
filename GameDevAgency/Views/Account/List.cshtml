@@ -1,12 +1,16 @@
-﻿@model IEnumerable<GameDevAgency.Models.ApplicationUser>
+﻿@model GameDevAgency.Models.ViewModels.ListAccounts
 @{
     ViewBag.Title = "User List";
 }
 
 <div class="d-flex align-items-center gap-4">
     <h2>User List</h2>
+    @if (Model.IsAdmin)
+    {
+       <a href="/Account/Register" class="btn btn-primary">Add User</a>
+    }
 </div>
-@foreach (var user in Model)
+@foreach (var user in Model.ApplicationUsers)
 {
     <div class="py-4 border-bottom">
         <h3><a href="/Account/Details/@user.Id" class="text-dark">@user.FirstName @user.LastName</a></h3>

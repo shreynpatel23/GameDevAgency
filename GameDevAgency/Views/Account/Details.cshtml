@@ -1,14 +1,45 @@
-﻿@model GameDevAgency.Models.ApplicationUser
+﻿@model GameDevAgency.Models.ViewModels.DetailsUser
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "User Details";
 }
 
-<h2>User Details</h2>
+<a href="/Account/List" class="btn btn-secondary">Back To Users</a>
+<hr />
+<div class="d-flex align-items-center gap-2">
+    <h2>User Details</h2>
+    @if (Model.IsAdmin)
+    {
+        <div class="d-flex align-items-center gap-4 ms-auto">
+            <a href="/Account/Edit/@Model.ApplicationUser.Id" class="btn btn-success">Edit</a>
+            <a href="/Account/ConfirmDelete/@Model.ApplicationUser.Id" class="btn btn-danger">Delete</a>
+        </div>
+    }
+</div>
 
-<p>First Name: @Model.FirstName</p>
-<p>Last Name: @Model.LastName</p>
-<p>User Name: @Model.UserName</p>
-<p>Email: @Model.Email</p>
+<p class="text-dark">First Name: <span class="fw-bold">@Model.ApplicationUser.FirstName</span></p>
+<p class="text-dark">Last Name: <span class="fw-bold">@Model.ApplicationUser.LastName</span></p>
+<p class="text-dark">User Name: <span class="fw-bold">@Model.ApplicationUser.UserName</span></p>
+<p class="text-dark">Email: <span class="fw-bold">@Model.ApplicationUser.Email</span></p>
+<p class="text-dark">Phone Number: <span class="fw-bold">@Model.ApplicationUser.PhoneNumber</span></p>
 
+<hr />
 
-<a href="/Account/Edit/@Model.Id" class="btn btn-primary">Edit</a>
+<h3>Tasks for @Model.ApplicationUser.FirstName @Model.ApplicationUser.LastName</h3>
+
+@if (Model.Activities.Count() <= 0)
+{
+    <p>There are no activities assigned to this User</p>
+    <a class="btn btn-primary" href="/Activity/List">Go To Activities</a>
+}
+<div class="d-flex align-items-start gap-4 flex-wrap mt-4">
+    @foreach (var activity in Model.Activities)
+    {
+        <div class="card" style="width: 25rem;">
+            <div class="card-body">
+                <h5 class="card-title"><a href="/Activity/Details/@activity.ActivityId" class="text-dark">@activity.ActivityName</a></h5>
+                <p class="text-dark">@activity.ActivityDescription</p>
+                <p class="text-dark">Game: <br /> <span class="fw-bold"><a href="/Game/Details/@activity.GameId">@activity.GameName</a></span></p>
+            </div>
+        </div>
+    }
+</div>

@@ -216,8 +216,14 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ViewModels\AccountUpdateViewModel.cs" />
     <Compile Include="Models\ViewModels\AddUpdateActivity.cs" />
+    <Compile Include="Models\ViewModels\DetailsActivity.cs" />
     <Compile Include="Models\ViewModels\DetailsGames.cs" />
     <Compile Include="Models\ViewModels\DetailsGenre.cs" />
+    <Compile Include="Models\ViewModels\DetailsUser.cs" />
+    <Compile Include="Models\ViewModels\ListAccounts.cs" />
+    <Compile Include="Models\ViewModels\ListActivities.cs" />
+    <Compile Include="Models\ViewModels\ListGames.cs" />
+    <Compile Include="Models\ViewModels\ListGenres.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>

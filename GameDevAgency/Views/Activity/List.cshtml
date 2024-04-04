@@ -1,4 +1,4 @@
-﻿@model IEnumerable<GameDevAgency.Models.ActivityDto>
+﻿@model GameDevAgency.Models.ViewModels.ListActivities
 @{
     ViewBag.Title = "Activity List";
 }
@@ -6,9 +6,12 @@
 
 <div class="d-flex align-items-center gap-4">
     <h2>Activity List</h2>
-    <a href="/Activity/Add" class="btn btn-primary">Add Activity</a>
+    @if (Model.IsAdmin)
+    {
+        <a href="/Activity/Add" class="btn btn-primary">Add Activity</a>
+    }
 </div>
-@foreach (var activity in Model)
+@foreach (var activity in Model.Activities)
 {
     <div class="py-4 border-bottom">
         <h3><a href="/Activity/Details/@activity.ActivityId" class="text-dark">@activity.ActivityName</a></h3>

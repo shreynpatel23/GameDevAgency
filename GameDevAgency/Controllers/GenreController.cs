@@ -2,6 +2,7 @@
 using GameDevAgency.Models.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Web;
@@ -30,6 +31,33 @@ namespace GameDevAgency.Controllers
             client.BaseAddress = new Uri("https://localhost:44313/api/");
         }
 
+        /// <summary>
+        /// Grabs the authentication cookie sent to this controller.
+        /// For proper WebAPI authentication, you can send a post request with login credentials to the WebAPI and log the access token from the response. The controller already knows this token, so we're just passing it up the chain.
+        /// 
+        /// Here is a descriptive article which walks through the process of setting up authorization/authentication directly.
+        /// https://docs.microsoft.com/en-us/aspnet/web-api/overview/security/individual-accounts-in-web-api
+        /// </summary>
+        private void GetApplicationCookie()
+        {
+            string token = "";
+            //HTTP client is set up to be reused, otherwise it will exhaust server resources.
+            //This is a bit dangerous because a previously authenticated cookie could be cached for
+            //a follow-up request from someone else. Reset cookies in HTTP client before grabbing a new one.
+            client.DefaultRequestHeaders.Remove("Cookie");
+            if (!User.Identity.IsAuthenticated) return;
+
+            HttpCookie cookie = System.Web.HttpContext.Current.Request.Cookies.Get(".AspNet.ApplicationCookie");
+            if (cookie != null) token = cookie.Value;
+
+            //collect token as it is submitted to the controller
+            //use it to pass along to the WebAPI.
+            Debug.WriteLine("Token Submitted is : " + token);
+            if (token != "") client.DefaultRequestHeaders.Add("Cookie", ".AspNet.ApplicationCookie=" + token);
+
+            return;
+        }
+
         // error page
         // GET  Error
         public ActionResult Error()
@@ -41,6 +69,13 @@ namespace GameDevAgency.Controllers
         // GET: Genre/List
         public ActionResult List()
         {
+            // declare the view model
+            ListGenres ListGenres = new ListGenres();
+
+            // check if the user role is admin or not
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin")) ListGenres.IsAdmin = true;
+            else ListGenres.IsAdmin = false;
+
             // make a curl request to
             // https://localhost:44313/api/GenreData/GetAllGenres
 
@@ -51,11 +86,13 @@ namespace GameDevAgency.Controllers
             HttpResponseMessage response = client.GetAsync(url).Result;
 
             // create empty GenreDto list and read the data from the response
-            IEnumerable<GenreDto> genre = response.Content.ReadAsAsync<IEnumerable<GenreDto>>().Result;
+            IEnumerable<GenreDto> genres = response.Content.ReadAsAsync<IEnumerable<GenreDto>>().Result;
 
+            // append the data in the view model
+            ListGenres.Genres = genres;
 
             // send the data in the view
-            return View(genre);
+            return View(ListGenres);
         }
 
         // GET: Genre/Details/5
@@ -63,6 +100,10 @@ namespace GameDevAgency.Controllers
         {
             // view model to get genre details and list of games for each genre
             DetailsGenre DetailsGenre = new DetailsGenre();
+
+            // check if the user role is admin or not
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin")) DetailsGenre.IsAdmin = true;
+            else DetailsGenre.IsAdmin = false;
 
             // make a curl request to get the genre details
             // https://localhost:44313/api/GenreData/GetGenreDetails/4
@@ -99,6 +140,7 @@ namespace GameDevAgency.Controllers
         }
 
         // GET: Genre/Add
+        [Authorize(Roles = "Admin")]
         public ActionResult Add()
         {
             return View();
@@ -106,8 +148,11 @@ namespace GameDevAgency.Controllers
 
         // POST: Genre/Create
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult Create(Genre Genre)
         {
+            GetApplicationCookie();//get token credentials
+
             // make a curl request to
             // https://localhost:44313/api/GenreData/AddGenre/4
 
@@ -139,6 +184,7 @@ namespace GameDevAgency.Controllers
         }
 
         // GET: Genre/Edit/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int id)
         {
             // make a curl request to
@@ -160,10 +206,13 @@ namespace GameDevAgency.Controllers
 
         // POST: Genre/Update/5
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult Update(int id, Genre Genre)
         {
             try
             {
+                GetApplicationCookie();//get token credentials
+
                 // call the update activity api using the following api
                 // curl -H "Content-Type:application/json" -d @genre.json https://localhost:44313/api/GenreData/UpdateGenre/4
                 string url = "GenreData/UpdateGenre/" + id;
@@ -190,6 +239,7 @@ namespace GameDevAgency.Controllers
         }
 
         // GET: Genre/ConfirmDelete/5
+        [Authorize(Roles = "Admin")]
         public ActionResult ConfirmDelete(int id)
         {
             // make a curl request to
@@ -211,10 +261,13 @@ namespace GameDevAgency.Controllers
 
         // POST: Genre/Delete/5
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
             try
             {
+                GetApplicationCookie();//get token credentials
+
                 // call the delete game api
                 // curl -d "" https://localhost:44313/api/GenreData/DeleteGenre/4
                 string url = "GenreData/DeleteGenre/" + id;

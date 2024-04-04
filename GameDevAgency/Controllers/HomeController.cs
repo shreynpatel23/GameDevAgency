@@ -10,7 +10,7 @@ namespace GameDevAgency.Controllers
     {
         public ActionResult Index()
         {
-            return View();
+            return Redirect("/Game/List");
         }
 
         public ActionResult About()

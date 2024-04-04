@@ -109,6 +109,7 @@ namespace GameDevAgency.Controllers
         [ResponseType(typeof(void))]
         [HttpPost]
         [Route("api/GenreData/UpdateGenre/{id}")]
+        [Authorize(Roles = "Admin")]
         public IHttpActionResult PutGenre(int id, Genre genre)
         {
             if (!ModelState.IsValid)
@@ -146,6 +147,7 @@ namespace GameDevAgency.Controllers
         [ResponseType(typeof(Genre))]
         [HttpPost]
         [Route("api/GenreData/AddGenre")]
+        [Authorize(Roles = "Admin")]
         public IHttpActionResult PostGenre(Genre genre)
         {
             if (!ModelState.IsValid)
@@ -163,6 +165,7 @@ namespace GameDevAgency.Controllers
         [ResponseType(typeof(Genre))]
         [HttpPost]
         [Route("api/GenreData/DeleteGenre/{id}")]
+        [Authorize(Roles = "Admin")]
         public IHttpActionResult DeleteGenre(int id)
         {
             Genre genre = db.Genres.Find(id);

@@ -1,13 +1,16 @@
-﻿@model IEnumerable<GameDevAgency.Models.GenreDto>
+﻿@model GameDevAgency.Models.ViewModels.ListGenres
 @{
     ViewBag.Title = "Genre List";
 }
 
 <div class="d-flex align-items-center gap-4">
     <h2>Genre List</h2>
-    <a href="/Genre/Add" class="btn btn-primary">Add Genre</a>
+    @if (Model.IsAdmin)
+    {
+        <a href="/Genre/Add" class="btn btn-primary">Add Genre</a>
+    }
 </div>
-@foreach (var genre in Model)
+@foreach (var genre in Model.Genres)
 {
     <div class="py-4">
         <h3><a href="/Genre/Details/@genre.GenreId" class="text-dark">@genre.GenreName </a></h3>

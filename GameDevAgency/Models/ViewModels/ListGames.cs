@@ -5,14 +5,11 @@ using System.Web;
 
 namespace GameDevAgency.Models.ViewModels
 {
-    public class DetailsGenre
+    public class ListGames
     {
-        // boolean property whether the user is admin or not
+        // flag to check whether the user is admin
         public bool IsAdmin {  get; set; }
-        // selected genre with id
-        public GenreDto Genre { get; set; }
-        // list of games for a genre
+        // List of games
         public IEnumerable<GameDto> Games { get; set; }
-
     }
 }

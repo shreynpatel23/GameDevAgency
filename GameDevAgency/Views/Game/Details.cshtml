@@ -8,10 +8,13 @@
 <hr />
 <div class="d-flex align-items-center gap-2">
     <h2>Game Details</h2>
-    <div class="d-flex align-items-center gap-4 ms-auto">
-        <a href="/Game/Edit/@Model.Game.GameId" class="btn btn-success">Edit</a>
-        <a href="/Game/ConfirmDelete/@Model.Game.GameId" class="btn btn-danger">Delete</a>
-    </div>
+    @if (Model.IsAdmin)
+    {
+        <div class="d-flex align-items-center gap-4 ms-auto">
+            <a href="/Game/Edit/@Model.Game.GameId" class="btn btn-success">Edit</a>
+            <a href="/Game/ConfirmDelete/@Model.Game.GameId" class="btn btn-danger">Delete</a>
+        </div>
+    }
 </div>
 
 <p class="text-dark">Game Name: <span class="fw-bold">@Model.Game.GameName</span></p>
@@ -56,4 +59,20 @@
 <hr />
 <h3>Tasks for @Model.Game.GameName</h3>
 
-<p>List of tasks will come here</p>
+@if (Model.Activities.Count() <= 0)
+{
+    <p>There are no activities assigned to this Game</p>
+    <a class="btn btn-primary" href="/Activity/List">Go To Activities</a>
+}
+<div class="d-flex align-items-start gap-4 flex-wrap mt-4">
+    @foreach (var activity in Model.Activities)
+    {
+        <div class="card" style="width: 25rem;">
+            <div class="card-body">
+                <h5 class="card-title"><a href="/Activity/Details/@activity.ActivityId" class="text-dark">@activity.ActivityName</a></h5>
+                <p class="text-dark">@activity.ActivityDescription</p>
+                <p class="text-dark">Assigned To : <br /> <span class="fw-bold"><a href="/Account/Details/@activity.UserId">@activity.FirstName @activity.LastName</a></span></p>
+            </div>
+        </div>
+    }
+</div>

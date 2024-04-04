@@ -17,6 +17,8 @@ using System.EnterpriseServices;
 using System.Data.Entity.Migrations;
 using System.Data.Entity;
 using System.Web.Security;
+using System.Security.Policy;
+using System.Net.Http;
 
 namespace GameDevAgency.Controllers
 {
@@ -25,9 +27,20 @@ namespace GameDevAgency.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
         private ApplicationDbContext db = new ApplicationDbContext();
+        // declare http client
+        private readonly HttpClient client;
 
         public AccountController()
         {
+            HttpClientHandler handler = new HttpClientHandler()
+            {
+                AllowAutoRedirect = false,
+                //cookies are manually set in RequestHeader
+                UseCookies = false
+            };
+
+            client = new HttpClient(handler);
+            client.BaseAddress = new Uri("https://localhost:44313/api/");
         }
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
@@ -61,20 +74,57 @@ namespace GameDevAgency.Controllers
         }
 
         // GET: /Account/List
-        [Authorize(Roles = "Admin")]
         public ActionResult List()
         {
+
+            // declare the view model for account list
+            ListAccounts ListAccounts = new ListAccounts();
+
+            // check if the user role is admin or not
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin")) ListAccounts.IsAdmin = true;
+            else ListAccounts.IsAdmin = false;
+
+            // fetch the list of users from db
             List<ApplicationUser> ApplicationUsers = db.Users.OrderBy(u => u.FirstName).ToList();
-            return View(ApplicationUsers);
+
+            // append the data in the view model
+            ListAccounts.ApplicationUsers = ApplicationUsers;
+
+            // return the view model
+            return View(ListAccounts);
         }
 
         // GET: /Account/Details/{id}
-        [Authorize(Roles = "Admin")]
         public ActionResult Details(string id)
         {
+            // declare the view model for user details
+            DetailsUser DetailsUser = new DetailsUser();
+
+            // check if the user role is admin or not
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin")) DetailsUser.IsAdmin = true;
+            else DetailsUser.IsAdmin = false;
+
+            // fetch the user details by user id
             ApplicationUser ApplicationUser = db.Users.Find(id);
-            
-            return View(ApplicationUser);
+
+            // assign it to the view model
+            DetailsUser.ApplicationUser = ApplicationUser;
+
+            // fetch the activities for a particular user by userId
+            // https://localhost:44313/api/ActivityData/GetAllActivitiesForUser/4
+
+            string url = "ActivityData/GetAllActivitiesForUser/" + id;
+
+            // extract the response
+            HttpResponseMessage response = client.GetAsync(url).Result;
+
+            IEnumerable<ActivityDto> Activities = response.Content.ReadAsAsync<IEnumerable<ActivityDto>>().Result;
+
+            // assign it to the view model
+            DetailsUser.Activities = Activities;
+
+            // send the view model
+            return View(DetailsUser);
         }
 
         // GET /Account/Edit/{id}

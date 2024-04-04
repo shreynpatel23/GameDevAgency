@@ -46,12 +46,97 @@ namespace GameDevAgency.Controllers
                 ActivityEstimates = activity.ActivityEstimates,
                 ActivityPriority = activity.ActivityPriority,
                 ActivityStatus = activity.ActivityStatus,
+                UserId = activity.ApplicationUser.Id,
                 FirstName = activity.ApplicationUser.FirstName,
                 LastName = activity.ApplicationUser.LastName,
                 GameId = activity.Game.GameId,
                 GameName = activity.Game.GameName,
             }));
             // return update GameDto
+            return ActivityDtos;
+        }
+
+        /// <summary>
+        /// Returns a list of all the activities for a particular Game id
+        /// </summary>
+        /// <param name="id">The Game id for which we want to fetch all the activities</param>
+        /// <example>GET api/ActivityData/GetAllActivitiesForGame/2</example>
+        /// <example>
+        /// GET: curl "http://localhost:50860/api/ActivityData/GetAllActivitiesForGame/2"
+        /// </example>
+        /// <returns>
+        /// A list of all the activities present in DB for a particular Game id.
+        /// </returns>
+        // Get all activites for a Game with id
+        [HttpGet]
+        [Route("api/ActivityData/GetAllActivitiesForGame/{id}")]
+        public IEnumerable<ActivityDto> GetAllActivitiesForGame(int id)
+        {
+            // capture the list of result in activity list;
+            List<Activity> Activities = db.Activities.Where(a => a.GameId == id).ToList();
+            // create a new activity dtos list to store the response
+            List<ActivityDto> ActivityDtos = new List<ActivityDto>();
+
+            // loop through the activites array and push it to activities dto
+            Activities.ForEach(activity => ActivityDtos.Add(new ActivityDto()
+            {
+                ActivityId = activity.ActivityId,
+                ActivityName = activity.ActivityName,
+                ActivityDescription = activity.ActivityDescription,
+                ActivityDueDate = activity.ActivityDueDate,
+                ActivityEstimates = activity.ActivityEstimates,
+                ActivityPriority = activity.ActivityPriority,
+                ActivityStatus = activity.ActivityStatus,
+                UserId = activity.ApplicationUser.Id,
+                FirstName = activity.ApplicationUser.FirstName,
+                LastName = activity.ApplicationUser.LastName,
+                GameId = activity.Game.GameId,
+                GameName = activity.Game.GameName,
+            }));
+
+            // return the activity dto
+            return ActivityDtos;
+        }
+
+        /// <summary>
+        /// Returns a list of all the activities for a particular User id
+        /// </summary>
+        /// <param name="id">The User id for which we want to fetch all the activities</param>
+        /// <example>GET api/ActivityData/GetAllActivitiesForUser/36659b5f-5732-455a-b537-5a1ee5e40f3c</example>
+        /// <example>
+        /// GET: curl "http://localhost:50860/api/ActivityData/GetAllActivitiesForUser/36659b5f-5732-455a-b537-5a1ee5e40f3c"
+        /// </example>
+        /// <returns>
+        /// A list of all the activities present in DB for a particular user id.
+        /// </returns>
+        // Get all activites for a user with id
+        [HttpGet]
+        [Route("api/ActivityData/GetAllActivitiesForUser/{id}")]
+        public IEnumerable<ActivityDto> GetAllActivitiesForUser(string id)
+        {
+            // capture the list of result in activity list;
+            List<Activity> Activities = db.Activities.Where(a => a.UserId == id).ToList();
+            // create a new activity dtos list to store the response
+            List<ActivityDto> ActivityDtos = new List<ActivityDto>();
+
+            // loop through the activites array and push it to activities dto
+            Activities.ForEach(activity => ActivityDtos.Add(new ActivityDto()
+            {
+                ActivityId = activity.ActivityId,
+                ActivityName = activity.ActivityName,
+                ActivityDescription = activity.ActivityDescription,
+                ActivityDueDate = activity.ActivityDueDate,
+                ActivityEstimates = activity.ActivityEstimates,
+                ActivityPriority = activity.ActivityPriority,
+                ActivityStatus = activity.ActivityStatus,
+                UserId = activity.ApplicationUser.Id,
+                FirstName = activity.ApplicationUser.FirstName,
+                LastName = activity.ApplicationUser.LastName,
+                GameId = activity.Game.GameId,
+                GameName = activity.Game.GameName,
+            }));
+
+            // return the activity dto
             return ActivityDtos;
         }
 
@@ -125,6 +210,7 @@ namespace GameDevAgency.Controllers
         [ResponseType(typeof(void))]
         [HttpPost]
         [Route("api/ActivityData/UpdateActivity/{id}")]
+        [Authorize(Roles = "Admin")]
         public IHttpActionResult UpdateActivity(int id, Activity activity)
         {
             if (!ModelState.IsValid)
@@ -183,6 +269,7 @@ namespace GameDevAgency.Controllers
         [ResponseType(typeof(Activity))]
         [HttpPost]
         [Route("api/ActivityData/AddActivity")]
+        [Authorize(Roles = "Admin")]
         public IHttpActionResult AddActivity(Activity activity)
         {
             if (!ModelState.IsValid)
@@ -200,14 +287,15 @@ namespace GameDevAgency.Controllers
         /// Deletes a particular activity from the database
         /// </summary>
         /// <param name="id">The id which we want to remove.</param>
-        /// <example>POST api/ProjectData/DeleteActivity/3</example>
+        /// <example>POST api/ActivityData/DeleteActivity/3</example>
         /// <example>
-        /// POST: curl "http://localhost:50860/api/ProjectData/DeleteActivity/16" -d "" -H "Content-type: application/json"
+        /// POST: curl "http://localhost:50860/api/ActivityData/DeleteActivity/16" -d "" -H "Content-type: application/json"
         /// </example>
         // POST: api/ActivityData/DeleteActivity/5
         [ResponseType(typeof(Activity))]
         [HttpPost]
         [Route("api/ActivityData/DeleteActivity/{id}")]
+        [Authorize(Roles = "Admin")]
         public IHttpActionResult DeleteActivity(int id)
         {
             Activity activity = db.Activities.Find(id);

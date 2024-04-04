@@ -8,10 +8,13 @@
 <hr />
 <div class="d-flex align-items-center gap-2">
     <h2>Genre Details</h2>
-    <div class="d-flex align-items-center gap-4 ms-auto">
-        <a href="/Genre/Edit/@Model.Genre.GenreId" class="btn btn-success">Edit</a>
-        <a href="/Genre/ConfirmDelete/@Model.Genre.GenreId" class="btn btn-danger">Delete</a>
-    </div>
+    @if (Model.IsAdmin)
+    {
+        <div class="d-flex align-items-center gap-4 ms-auto">
+            <a href="/Genre/Edit/@Model.Genre.GenreId" class="btn btn-success">Edit</a>
+            <a href="/Genre/ConfirmDelete/@Model.Genre.GenreId" class="btn btn-danger">Delete</a>
+        </div>
+    }
 </div>
 
 <p class="text-dark">Genre Name: <span class="fw-bold">@Model.Genre.GenreName</span></p>

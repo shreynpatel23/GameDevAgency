@@ -135,6 +135,7 @@ namespace GameDevAgency.Controllers
         [ResponseType(typeof(void))]
         [HttpPost]
         [Route("api/GameData/UpdateGame/{id}")]
+        [Authorize(Roles = "Admin")]
         public IHttpActionResult UpdateGame(int id, Game game)
         {
             if (!ModelState.IsValid)
@@ -172,6 +173,7 @@ namespace GameDevAgency.Controllers
         [ResponseType(typeof(Game))]
         [Route("api/GameData/AddGame")]
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IHttpActionResult AddGame(Game game)
         {
             if (!ModelState.IsValid)
@@ -189,6 +191,7 @@ namespace GameDevAgency.Controllers
         [ResponseType(typeof(Game))]
         [HttpPost]
         [Route("api/GameData/DeleteGame/{id}")]
+        [Authorize(Roles = "Admin")]
         public IHttpActionResult DeleteGame(int id)
         {
             Game game = db.Games.Find(id);

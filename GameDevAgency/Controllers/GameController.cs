@@ -71,6 +71,14 @@ namespace GameDevAgency.Controllers
         // GET: Game/List
         public ActionResult List()
         {
+            // declare the view model
+            ListGames ListGames = new ListGames();
+
+            // check if the user role is admin or not
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin")) ListGames.IsAdmin = true;
+            else ListGames.IsAdmin = false;
+
+
             // make a curl request to
             // https://localhost:44313/api/GameData/GetAllGames
 
@@ -83,9 +91,11 @@ namespace GameDevAgency.Controllers
             // create empty GameDta list and read the data from the response
             IEnumerable<GameDto> games = response.Content.ReadAsAsync<IEnumerable<GameDto>>().Result;
 
+            // append the games list to the view model
+            ListGames.Games = games;
 
             // send the data in the view
-            return View(games);
+            return View(ListGames);
         }
 
         // GET: Game/Details/5
@@ -139,6 +149,17 @@ namespace GameDevAgency.Controllers
             // assing it to the view model
             DetailsGames.AvailableGenres = AvailableGenres;
 
+            // fetch the list of activities for a particular game id
+            url = "ActivityData/GetAllActivitiesForGame/" + id;
+
+            // extract the response
+            response = client.GetAsync(url).Result;
+
+            IEnumerable<ActivityDto> Activities = response.Content.ReadAsAsync<IEnumerable<ActivityDto>>().Result;
+
+            // assign it to the view model
+            DetailsGames.Activities = Activities;
+
             // pass the data to the view
             return View(DetailsGames);
         }
@@ -152,8 +173,14 @@ namespace GameDevAgency.Controllers
 
             //call our api to associate game with genre
             string url = "GameData/AssociateGameWithGenre/" + id + "/" + GenreId;
+
+            // append an empty string content as this is a post request without data
             HttpContent content = new StringContent("");
+
+            // update the content-type property
             content.Headers.ContentType.MediaType = "application/json";
+
+            // send the request and read the results
             HttpResponseMessage response = client.PostAsync(url, content).Result;
 
             return RedirectToAction("Details/" + id);
@@ -168,14 +195,21 @@ namespace GameDevAgency.Controllers
 
             //call our api to unassociate game with genre
             string url = "GameData/UnAssociateGameWithGenre/" + id + "/" + GenreId;
+
+            // append an empty string content as this is a post request without data
             HttpContent content = new StringContent("");
+
+            // update the content-type property
             content.Headers.ContentType.MediaType = "application/json";
+
+            // send the request and read the results
             HttpResponseMessage response = client.PostAsync(url, content).Result;
 
             return RedirectToAction("Details/" + id);
         }
 
         // GET: Game/Add
+        [Authorize(Roles = "Admin")]
         public ActionResult Add()
         {
             return View();
@@ -183,8 +217,11 @@ namespace GameDevAgency.Controllers
 
         // POST: Game/Create
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult Create(Game Game)
         {
+            GetApplicationCookie();//get token credentials
+
             // make a curl request to
             // https://localhost:44313/api/GameData/AddGame/4
 
@@ -216,8 +253,10 @@ namespace GameDevAgency.Controllers
         }
 
         // GET: Game/Edit/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int id)
         {
+            GetApplicationCookie();//get token credentials
 
             // ge the details of the game from the given id
             // make a curl request to
@@ -240,10 +279,13 @@ namespace GameDevAgency.Controllers
 
         // POST: Game/Update/5
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult Update(int id, Game Game)
         {
             try
             {
+                GetApplicationCookie();//get token credentials
+
                 // call the update activity api using the following api
                 // curl -H "Content-Type:application/json" -d @game.json https://localhost:44313/api/GameData/UpdateGame/4
                 string url = "GameData/UpdateGame/" + id;
@@ -270,6 +312,7 @@ namespace GameDevAgency.Controllers
         }
 
         // GET: Game/ConfirmDelete/5
+        [Authorize(Roles = "Admin")]
         public ActionResult ConfirmDelete(int id)
         {
             // ge the details of the game from the given id
@@ -291,10 +334,13 @@ namespace GameDevAgency.Controllers
 
         // POST: Game/Delete/5
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int id, FormCollection collection)
         {
             try
             {
+                GetApplicationCookie();//get token credentials
+
                 // call the delete game api
                 // curl -d "" https://localhost:44313/api/GameData/DeleteGame/4
                 string url = "GameData/DeleteGame/" + id;
