@@ -3,7 +3,7 @@
     ViewBag.Title = "User Details";
 }
 
-<a href="/Account/List" class="btn btn-secondary">Back To Users</a>
+<a href="/Account/List" class="btn btn-outline-dark">Back To Users</a>
 <hr />
 <div class="d-flex align-items-center gap-2">
     <h2>User Details</h2>
@@ -20,7 +20,17 @@
 <p class="text-dark">Last Name: <span class="fw-bold">@Model.ApplicationUser.LastName</span></p>
 <p class="text-dark">User Name: <span class="fw-bold">@Model.ApplicationUser.UserName</span></p>
 <p class="text-dark">Email: <span class="fw-bold">@Model.ApplicationUser.Email</span></p>
-<p class="text-dark">Phone Number: <span class="fw-bold">@Model.ApplicationUser.PhoneNumber</span></p>
+@if (!string.IsNullOrEmpty(Model.ApplicationUser.PhoneNumber))
+{
+    <p class="text-dark">Phone Number: <span class="fw-bold">@Model.ApplicationUser.PhoneNumber</span></p>
+}
+
+<p class="text-dark">
+    Role: @foreach (var role in Model.Roles)
+    {
+        <span class="fw-bold">@role</span>
+    }
+</p>
 
 <hr />
 

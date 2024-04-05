@@ -104,6 +104,9 @@ namespace GameDevAgency.Controllers
             if (User.Identity.IsAuthenticated && User.IsInRole("Admin")) DetailsUser.IsAdmin = true;
             else DetailsUser.IsAdmin = false;
 
+            // Fetch the roles of the user
+            DetailsUser.Roles = UserManager.GetRoles(id);
+
             // fetch the user details by user id
             ApplicationUser ApplicationUser = db.Users.Find(id);
 
@@ -118,6 +121,7 @@ namespace GameDevAgency.Controllers
             // extract the response
             HttpResponseMessage response = client.GetAsync(url).Result;
 
+            // create a new activity dto list and assign the response
             IEnumerable<ActivityDto> Activities = response.Content.ReadAsAsync<IEnumerable<ActivityDto>>().Result;
 
             // assign it to the view model
@@ -147,7 +151,7 @@ namespace GameDevAgency.Controllers
             AccountUpdateViewModel.PhoneNumber = ApplicationUser.PhoneNumber;
             AccountUpdateViewModel.UserName = ApplicationUser.UserName;
             
-
+            // return the view model
             return View(AccountUpdateViewModel);
         }
 
@@ -156,12 +160,14 @@ namespace GameDevAgency.Controllers
         [HttpPost]
         public async Task<ActionResult> Update(string id, AccountUpdateViewModel model)
         {
+            // check for model state
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
-
-            var user = await UserManager.FindByIdAsync(model.UserId);
+            
+            // find the user details with the given id 
+            var user = await UserManager.FindByIdAsync(id);
             if (user == null)
             {
                 return HttpNotFound();
@@ -174,10 +180,6 @@ namespace GameDevAgency.Controllers
             user.UserName = model.UserName;
             user.PhoneNumber = model.PhoneNumber;
 
-            // update the role of the user
-            //adding a role of "Guest" to the newly added user.
-            UserManager.AddToRole(user.Id, "Developer");
-
             var result = await UserManager.UpdateAsync(user);
             if (!result.Succeeded)
             {
@@ -185,8 +187,46 @@ namespace GameDevAgency.Controllers
                 return View(model);
             }
 
-            return RedirectToAction("List");
+            return RedirectToAction("Details/" + id);
 
+        }
+
+        // GET /Account/ConfirmDelete/{id}
+        [Authorize(Roles = "Admin")]
+        public ActionResult ConfirmDelete(string id)
+        {
+            // fetch the user details by user id
+            ApplicationUser ApplicationUser = db.Users.Find(id);
+
+            // return the data to the view
+            return View(ApplicationUser);
+        }
+
+        // GET /Account/Delete/{id}
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public ActionResult Delete(string id)
+        {
+            // find the user details with given id
+            var user = UserManager.FindById(id);
+
+            // return not found if the user is null
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+
+            // perform delete functinality of the given user
+            var result = UserManager.Delete(user);
+
+            // throw error if there is some issue in deleting
+            if (!result.Succeeded)
+            {
+                return new HttpStatusCodeResult(500, "Failed to delete user.");
+            }
+
+            // redirect to /Account/List
+            return RedirectToAction("List");
         }
 
         //
@@ -212,7 +252,7 @@ namespace GameDevAgency.Controllers
 
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            var result = await SignInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:

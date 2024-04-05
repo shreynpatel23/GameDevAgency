@@ -132,14 +132,14 @@ namespace GameDevAgency.Controllers
         [Authorize(Roles = "Admin")]
         public ActionResult Add()
         {
-            // for this page we need to list of projects and collaborators in dropdowns
+            // for this page we need to list of games and users in dropdowns
             // so we created a viewModal for AddUpdateActivity.
             // this view modal will have
             // -> selectedActivity (in case of update)
             // -> listOfGames
             // -> ListOfUsers
 
-            // create a new viewmodel for {collaboratos, and projects}
+            // create a new viewmodel for {Games, and Users}
             AddUpdateActivity AddUpdateActivity = new AddUpdateActivity();
 
             // fetch all the list of users present in the database
@@ -148,15 +148,15 @@ namespace GameDevAgency.Controllers
             // assign them to the viewmodal
             AddUpdateActivity.Users = ApplicationUsers;
 
-            // fetch all the list of projects in the system
-            // curl https://localhost:44313/api/ProjectData/GetAllProjects
+            // fetch all the list of games in the system
+            // curl https://localhost:44313/api/GameData/GetAllGames
 
             string url = "GameData/GetAllGames";
 
             // get the response
             HttpResponseMessage  response = client.GetAsync(url).Result;
 
-            // create an empty project list and read the data as async
+            // create an empty games list and read the data as async
             IEnumerable<Game> Games = response.Content.ReadAsAsync<IEnumerable<Game>>().Result;
 
             // assign them to the viewmodal
@@ -215,7 +215,7 @@ namespace GameDevAgency.Controllers
             // this function again uses the view modal which we created for add activity
             // the only difference is it will also have the selected activity to populate the form
 
-            // create a new viewmodel for {collaboratos, and projects}
+            // create a new viewmodel for {Games, and User}
             AddUpdateActivity AddUpdateActivity = new AddUpdateActivity();
 
             // fetch the activity details from the given id
@@ -240,8 +240,8 @@ namespace GameDevAgency.Controllers
             // assign them to the viewmodal
             AddUpdateActivity.Users = ApplicationUsers;
 
-            // fetch all the list of projects in the system
-            // curl https://localhost:44313/api/ProjectData/GetAllProjects
+            // fetch all the list of games in the system
+            // curl https://localhost:44313/api/GameData/GetAllGames
 
             url = "GameData/GetAllGames";
 

@@ -1,0 +1,15 @@
+﻿﻿@model GameDevAgency.Models.ApplicationUser
+@{
+    ViewBag.Title = "Confirm Delete User";
+}
+
+<h2>Confirm Delete <span class="text-danger"> @Model.FirstName @Model.LastName</span></h2>
+
+<p class="mb-0 mt-3">Are you sure you want to delete
+<p>Please keep in mind this action cannot be undone!</p>
+<div class="d-flex align-items-center gap-4 mt-4">
+    <a href="/Account/Details/@Model.Id" class="btn btn-outline-dark">Cancel</a>
+    <form action="/Account/Delete/@Model.Id" method="POST">
+        <input type="submit" class="btn btn-danger" value="Confirm Delete" />
+    </form>
+</div>

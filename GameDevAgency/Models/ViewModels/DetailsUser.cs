@@ -11,6 +11,8 @@ namespace GameDevAgency.Models.ViewModels
         public bool IsAdmin { get; set; }
         // the selected user details
         public ApplicationUser ApplicationUser { get; set; }
+        // roles of the user
+        public IEnumerable<string> Roles { get; set; }
         // activities of a particular user
         public IEnumerable<ActivityDto> Activities {  get; set; }
 

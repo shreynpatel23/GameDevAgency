@@ -185,7 +185,7 @@ namespace GameDevAgency.Controllers
         }
 
         /// <summary>
-        /// Update a particular collaborator with a given id and the updated activity details
+        /// Update a particular activity with a given id and the updated activity details
         /// </summary>
         /// <param name="id">The id for which we need to change the data</param>
         /// <param name="activity">the updated activity data</param>
@@ -200,7 +200,7 @@ namespace GameDevAgency.Controllers
         ///	"ActivityPriority" : "Easy",
         ///	"ActivityEstimates":"2",
         ///	"GameId": 2,
-        ///	"UserId": 1,
+        ///	"UserId": 482a9483-c7a2-4a3d-85c8-e92216a86429,
         /// }
         /// </example>
         /// <example>
@@ -245,7 +245,7 @@ namespace GameDevAgency.Controllers
         }
 
         /// <summary>
-        /// Update a particular collaborator with a given id and the updated activity details
+        /// Adds an activity to the database
         /// </summary>
         /// <param name="activity">the activity data which needs to be entered in the database</param>
         /// <example>
@@ -259,7 +259,7 @@ namespace GameDevAgency.Controllers
         ///	"ActivityPriority" : "Easy",
         ///	"ActivityEstimates":"3",
         ///	"GameId": 3,
-        ///	"UserID": 2,
+        ///	"UserID": 482a9483-c7a2-4a3d-85c8-e92216a86429,
         /// }
         /// </example>
         /// <example>

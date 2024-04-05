@@ -35,9 +35,10 @@
                 <input autocomplete="off" value="@Model.PhoneNumber" type="text" class="form-control" id="PhoneNumber" name="PhoneNumber" placeholder="Enter phone number here" aria-describedby="Phone Number">
             </div>
         </div>
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <input type="submit" value="Update" class="btn btn-outline-dark" />
+        <div class="mt-4">
+            <div class="d-flex align-items-center gap-4">
+                <a href="/Account/Details/@Model.UserId" class="btn btn-outline-dark">Cancel</a>
+                <input type="submit" value="Update" class="btn btn-primary" />
             </div>
         </div>
     </form>
