@@ -16,6 +16,17 @@ namespace GameDevAgency.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
+        /// <summary>
+        /// Returns a list of all the games present in the database. Here as
+        /// we have a foreign key we need to return GamesDto.
+        /// </summary>
+        /// <example>GET api/GameData/GetAllGames</example>
+        /// <example>
+        /// GET: curl "http://localhost:50860/api/GameData/GetAllGames"
+        /// </example>
+        /// <returns>
+        /// A list of all the games DTO (Data trasnferable object) present in DB.
+        /// </returns>
         // GET: api/GameData/GetAllGames  
         [HttpGet]
         [Route("api/GameData/GetAllGames")]
@@ -38,6 +49,12 @@ namespace GameDevAgency.Controllers
             return GameDtos;
         }
 
+
+        /// <summary>
+        /// Retrieves all games belonging to a specific genre from the database.
+        /// </summary>
+        /// <param name="id">The genre ID.</param>
+        /// <returns>An enumerable collection of GameDto objects.</returns>
         // GET: api/GameData/GetAllGamesForGenre/1  
         [HttpGet]
         [Route("api/GameData/GetAllGamesForGenre/{id}")]
@@ -62,6 +79,12 @@ namespace GameDevAgency.Controllers
             return GameDtos;
         }
 
+        /// <summary>
+        /// Associates a game with a genre.
+        /// </summary>
+        /// <param name="gameId">The ID of the game.</param>
+        /// <param name="genreId">The ID of the genre.</param>
+        /// <returns>An IHttpActionResult indicating the status of the association operation.</returns>
         [HttpPost]
         [Route("api/GameData/AssociateGameWithGenre/{gameId}/{genreId}")]
         [Authorize(Roles = "Admin")]
@@ -83,6 +106,12 @@ namespace GameDevAgency.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Unassociates a game with a genre.
+        /// </summary>
+        /// <param name="gameId">The ID of the game.</param>
+        /// <param name="genreId">The ID of the genre.</param>
+        /// <returns>An IHttpActionResult indicating the status of the unassociation operation.</returns>
         [HttpPost]
         [Route("api/GameData/UnAssociateGameWithGenre/{gameId}/{genreId}")]
         [Authorize(Roles = "Admin")]
@@ -104,6 +133,17 @@ namespace GameDevAgency.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Returns details of a particular game
+        /// </summary>
+        /// <param name="id">the id of game to fetch the details of it</param>
+        /// <example>GET api/GameData/GetGameDetails/2</example>
+        /// <example>
+        /// GET: curl "http://localhost:50860/api/GameData/GetGameDetails/1"
+        /// </example>
+        /// <returns>
+        /// A single activity DTO (data transferable object) with data
+        /// </returns>
         // GET: api/GameData/GetGameDetails/2
         [ResponseType(typeof(Game))]
         [HttpGet]
@@ -131,6 +171,12 @@ namespace GameDevAgency.Controllers
             return Ok(GameDto);
         }
 
+        /// <summary>
+        /// Updates details of a specific game in the database.
+        /// </summary>
+        /// <param name="id">The game ID.</param>
+        /// <param name="game">The updated game object.</param>
+        /// <returns>An IHttpActionResult indicating the status of the update operation.</returns>
         // PUT: api/GameData/UpdateGame/2
         [ResponseType(typeof(void))]
         [HttpPost]
@@ -169,6 +215,11 @@ namespace GameDevAgency.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+        /// <summary>
+        /// Adds a new game to the database.
+        /// </summary>
+        /// <param name="game">The game object to be added.</param>
+        /// <returns>An IHttpActionResult indicating the status of the add operation.</returns>
         // POST: api/GameData/AddGame
         [ResponseType(typeof(Game))]
         [Route("api/GameData/AddGame")]
@@ -187,6 +238,11 @@ namespace GameDevAgency.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Deletes a specific game from the database.
+        /// </summary>
+        /// <param name="id">The game ID.</param>
+        /// <returns>An IHttpActionResult containing the deleted game details.</returns>
         // DELETE: api/GameData/DeleteGame/2
         [ResponseType(typeof(Game))]
         [HttpPost]
@@ -206,6 +262,10 @@ namespace GameDevAgency.Controllers
             return Ok(game);
         }
 
+        /// <summary>
+        /// Disposes the database context.
+        /// </summary>
+        /// <param name="disposing">A flag indicating whether to dispose managed resources.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -215,6 +275,11 @@ namespace GameDevAgency.Controllers
             base.Dispose(disposing);
         }
 
+        /// <summary>
+        /// Checks if a game exists in the database.
+        /// </summary>
+        /// <param name="id">The game ID.</param>
+        /// <returns>True if the game exists; otherwise, false.</returns>
         private bool GameExists(int id)
         {
             return db.Games.Count(e => e.GameId == id) > 0;

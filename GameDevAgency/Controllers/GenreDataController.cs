@@ -18,6 +18,17 @@ namespace GameDevAgency.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
+        /// <summary>
+        /// Returns a list of all the genres present in the database. Here as
+        /// we have a foreign key we need to return GenreDto.
+        /// </summary>
+        /// <example>GET api/GenreData/GetAllGenres</example>
+        /// <example>
+        /// GET: curl "http://localhost:50860/api/GenreData/GetAllGenres"
+        /// </example>
+        /// <returns>
+        /// A list of all the genres DTO (Data trasnferable object) present in DB.
+        /// </returns>
         // GET: api/GenreData/GetAllGenres
         [HttpGet]
         [Route("api/GenreData/GetAllGenres")]
@@ -39,6 +50,11 @@ namespace GameDevAgency.Controllers
             return GenreDtos;
         }
 
+        /// <summary>
+        /// Retrieves all genres associated with a specific game.
+        /// </summary>
+        /// <param name="GameId">The ID of the game.</param>
+        /// <returns>An IHttpActionResult containing a list of GenreDto objects.</returns>
         // GET: api/GenreData/GetAllGenresForGame/{GameId}
         [HttpGet]
         [Route("api/GenreData/GetAllGenresForGame/{GameId}")]
@@ -59,6 +75,11 @@ namespace GameDevAgency.Controllers
             return Ok(GenreDto);
         }
 
+        /// <summary>
+        /// Retrieves all genres not associated with a specific game.
+        /// </summary>
+        /// <param name="GameId">The ID of the game.</param>
+        /// <returns>An IHttpActionResult containing a list of GenreDto objects.</returns>
         // GET: api/GenreData/GetAllGenresNotInGame/{GameId}
         [HttpGet]
         [Route("api/GenreData/GetAllGenresNotInGame/{GameId}")]
@@ -78,8 +99,18 @@ namespace GameDevAgency.Controllers
 
             return Ok(GenreDto);
         }
-       
 
+        /// <summary>
+        /// Returns details of a particular genre
+        /// </summary>
+        /// <param name="id">the id of genre to fetch the details of it</param>
+        /// <example>GET api/GenreData/GetGenreDetails/2</example>
+        /// <example>
+        /// GET: curl "http://localhost:50860/api/GenreData/GetGenreDetails/1"
+        /// </example>
+        /// <returns>
+        /// A single activity DTO (data transferable object) with data
+        /// </returns>
         // GET: api/GenreData/GetGenreDetails/2
         [ResponseType(typeof(Genre))]
         [HttpGet]
@@ -105,6 +136,12 @@ namespace GameDevAgency.Controllers
             return Ok(GenreDto);
         }
 
+        /// <summary>
+        /// Updates details of a specific genre in the database.
+        /// </summary>
+        /// <param name="id">The ID of the genre.</param>
+        /// <param name="genre">The updated genre object.</param>
+        /// <returns>An IHttpActionResult indicating the status of the update operation.</returns>
         // PUT: api/GenreData/UpdateGenre/2
         [ResponseType(typeof(void))]
         [HttpPost]
@@ -143,6 +180,11 @@ namespace GameDevAgency.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+        /// <summary>
+        /// Adds a new genre to the database.
+        /// </summary>
+        /// <param name="genre">The genre object to be added.</param>
+        /// <returns>An IHttpActionResult indicating the status of the add operation.</returns>
         // POST: api/GenreData/AddGenre
         [ResponseType(typeof(Genre))]
         [HttpPost]
@@ -161,6 +203,11 @@ namespace GameDevAgency.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Deletes a specific genre from the database.
+        /// </summary>
+        /// <param name="id">The ID of the genre.</param>
+        /// <returns>An IHttpActionResult containing the deleted genre details.</returns>
         // DELETE: api/GenreData/DeleteGenre/2
         [ResponseType(typeof(Genre))]
         [HttpPost]
